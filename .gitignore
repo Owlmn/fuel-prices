@@ -18,3 +18,10 @@ backend/exports/
 *.key
 *.p12
 *.pfx
+**/node_modules/
+**/dist/
+**/coverage/
+**/playwright-report/
+**/test-results/
+**/.vite/
+**/*.tsbuildinfo

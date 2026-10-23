@@ -1,11 +1,11 @@
 # Мониторинг цен на топливо
 
 Сервис сравнения региональных цен и расчёта бюджета заправки сельхозтехники.
-Backend готов; frontend — следующий этап.
+Backend и адаптивный frontend: графики, сравнение регионов и калькулятор заправки.
 
 - Данные Росстата: 85 регионов, ДТ, АИ-92 и АИ-95.
 - История цен, сравнение на общие даты, проверка обновлений.
-- Стек: Python 3.12–3.14, FastAPI, SQLite/WAL, Alembic.
+- Стек: React, TypeScript, Vite; Python, FastAPI, SQLite/WAL, Alembic.
 
 ## Запуск
 
@@ -28,10 +28,21 @@ Copy-Item .env.example .env
 
 Swagger: http://127.0.0.1:8011/docs.
 
+Frontend — в отдельном терминале:
+
+```powershell
+cd frontend
+npm ci
+npm run dev
+```
+
+Сервис: http://127.0.0.1:5173. API проксируется на порт 8011; при недоступности используется подписанный датой резервный снимок.
+
 ## Проверки и размещение
 
 Из `backend`: `python -m pytest -q` и `python -m ruff check app tests migrations` с активированным окружением.
 
-Шаблоны запуска на VPS — в `infra/`. Frontend планируется разместить на Vercel.
+Frontend: `npm test`, `npm run build`, `npm run test:e2e` (локально нужен Chrome).
+Шаблоны запуска на VPS — в `infra/`. Настройки Vercel — в [frontend/README.md](frontend/README.md).
 В `.env.example` задано исключение проверки TLS только для Росстата.
 Локальная БД, настройки и окружение в Git не включены.
