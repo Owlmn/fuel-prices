@@ -31,7 +31,7 @@ test('реальный API: цены, фильтры и восстановлен
   await page.getByRole('textbox', { name: 'Поиск региона' }).fill('Ростов')
   await page.getByRole('button', { name: 'Ростовская область', exact: true }).click()
   await page.getByRole('button', { name: 'АИ-92', exact: true }).click()
-  await page.getByRole('button', { name: '12', exact: true }).click()
+  await page.getByRole('button', { name: '12 недель', exact: true }).click()
   await expect(page).toHaveURL(/region=rostov_oblast&fuel=ai92&from=2026-08-03/)
   await expect(page.getByRole('heading', { name: 'Как менялась цена' })).toBeVisible()
   const before = await page.getByTestId('budget-total').innerText()

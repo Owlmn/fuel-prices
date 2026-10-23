@@ -13,8 +13,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ reso
   const { resource } = await params
   if (!resources.has(resource)) return failure(404, 'ENDPOINT_NOT_FOUND')
   const configured =
-    process.env.FUEL_API_BASE_URL ||
-    (process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8011' : '')
+    process.env.FUEL_API_BASE_URL ??
+    (process.env.NODE_ENV === 'development'
+      ? 'http://127.0.0.1:8011'
+      : 'https://fuel-prices.duckdns.org')
   if (!configured) return failure(503, 'API_NOT_CONFIGURED')
   let target: URL
   try {

@@ -1,0 +1,127 @@
+import { useEffect, useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+import type { Meta, Selection } from '../lib/contracts'
+import { formatDate } from '../lib/numbers'
+import { periodStart } from '../lib/selection'
+import RegionPicker from './RegionPicker'
+
+export default function Filters({
+  meta,
+  selection,
+  onChange,
+}: {
+  meta: Meta
+  selection: Selection
+  onChange: (patch: Partial<Selection>) => void
+}) {
+  const [dates, setDates] = useState({ from: selection.from, to: selection.to })
+  useEffect(
+    () => setDates({ from: selection.from, to: selection.to }),
+    [selection.from, selection.to],
+  )
+  const first = meta.expected_dates[0],
+    last = meta.expected_dates.at(-1)!
+  const valid =
+    !!dates.from && !!dates.to && dates.from <= dates.to && dates.from >= first && dates.to <= last
+  const edit = (patch: Partial<typeof dates>) => {
+    const next = { ...dates, ...patch }
+    setDates(next)
+    if (next.from && next.to && next.from <= next.to && next.from >= first && next.to <= last)
+      onChange(next)
+  }
+  return (
+    <section className="filter-panel" aria-label="Фильтры цен">
+      <RegionPicker
+        regions={meta.regions}
+        value={selection.region}
+        onChange={(region) => onChange({ region })}
+      />
+      <div className="fuel-picker">
+        <span className="field-label" id="fuel-label">
+          Вид топлива
+        </span>
+        <div className="segmented" role="group" aria-labelledby="fuel-label">
+          {(['diesel', 'ai92', 'ai95'] as const).map((fuel) => (
+            <button
+              key={fuel}
+              aria-pressed={selection.fuel === fuel}
+              className={fuel === selection.fuel ? 'active' : ''}
+              onClick={() => onChange({ fuel })}
+            >
+              {fuel === 'diesel' ? 'ДТ' : fuel === 'ai92' ? 'АИ-92' : 'АИ-95'}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="period-picker">
+        <span className="field-label">Даты наблюдений</span>
+        <details className="period-dates">
+          <summary
+            aria-label={`Выбрать даты наблюдений: ${formatDate(selection.from)} — ${formatDate(selection.to, true)}`}
+          >
+            {formatDate(selection.from)} — {formatDate(selection.to, true)}
+            <ChevronDown size={15} aria-hidden="true" />
+          </summary>
+          <div className="date-popover">
+            <label>
+              Начало периода
+              <input
+                type="date"
+                aria-label="Начало периода"
+                min={first}
+                max={dates.to || last}
+                value={dates.from}
+                onChange={(event) => edit({ from: event.target.value })}
+              />
+            </label>
+            <label>
+              Конец периода
+              <input
+                type="date"
+                aria-label="Конец периода"
+                min={dates.from || first}
+                max={last}
+                value={dates.to}
+                onChange={(event) => edit({ to: event.target.value })}
+              />
+            </label>
+          </div>
+        </details>
+        {!valid && (
+          <span className="field-error">
+            Выберите даты от {formatDate(first)} до {formatDate(last)}; начало не позже конца.
+            Показан предыдущий корректный период.
+          </span>
+        )}
+      </div>
+      <div className="quick-periods">
+        <span className="field-label" id="period-label">
+          Последние недели
+        </span>
+        <div role="group" aria-labelledby="period-label">
+          {[4, 8, 12].map((weeks) => (
+            <button
+              key={weeks}
+              aria-label={`${weeks} ${weeks === 4 ? 'недели' : 'недель'}`}
+              aria-pressed={
+                selection.from === periodStart(last, weeks, first) && selection.to === last
+              }
+              className={
+                selection.from === periodStart(last, weeks, first) && selection.to === last
+                  ? 'active'
+                  : ''
+              }
+              onClick={() => {
+                const next = { from: periodStart(last, weeks, first), to: last }
+                setDates(next)
+                onChange(next)
+              }}
+            >
+              {weeks}
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

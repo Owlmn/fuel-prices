@@ -16,10 +16,22 @@ import '../styles.css'
 import Providers from './providers'
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://127.0.0.1:5173'),
+  ),
   title: 'АгроТопливо — цены и бюджет заправки',
   description:
     'Сравнивайте региональные цены на топливо по данным Росстата и рассчитывайте бюджет заправки сельхозтехники.',
   icons: { icon: '/favicon.svg' },
+  openGraph: {
+    type: 'website',
+    locale: 'ru_RU',
+    siteName: 'АгроТопливо',
+    title: 'АгроТопливо — цены и бюджет заправки',
+    description: 'Региональные цены Росстата, сравнение динамики и расчёт заправки сельхозтехники.',
+  },
+  twitter: { card: 'summary_large_image' },
 }
 export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#174d3c' }
 

@@ -15,7 +15,19 @@ it('не предоставляет неизвестные и администр
   expect(upstream).not.toHaveBeenCalled()
 })
 
-it('при отсутствии адреса в production возвращает 503 для резервного режима', async () => {
+it.each([
+  ['production', 'https://fuel-prices.duckdns.org/api/v1/meta'],
+  ['development', 'http://127.0.0.1:8011/api/v1/meta'],
+])('использует стандартный адрес API для %s', async (environment, expected) => {
+  vi.stubEnv('NODE_ENV', environment)
+  vi.stubEnv('FUEL_API_BASE_URL', undefined)
+  const upstream = vi.fn().mockResolvedValue(Response.json({ dataset_version: 'current' }))
+  vi.stubGlobal('fetch', upstream)
+  expect((await GET(request(), context())).status).toBe(200)
+  expect(String(upstream.mock.calls[0][0])).toBe(expected)
+})
+
+it('явно пустой адрес включает резервный режим в production', async () => {
   vi.stubEnv('NODE_ENV', 'production')
   vi.stubEnv('FUEL_API_BASE_URL', '')
   const response = await GET(request(), context())
@@ -35,17 +47,15 @@ it.each([
 
 it('проксирует точный URL с версией и не пересылает cookies', async () => {
   vi.stubEnv('FUEL_API_BASE_URL', 'https://api.example.com')
-  const upstream = vi
-    .fn()
-    .mockResolvedValue(
-      new Response('{"dataset_version":"pinned"}', {
-        headers: {
-          'Content-Type': 'application/json',
-          'Set-Cookie': 'secret=value',
-          'Cache-Control': 'public, max-age=60',
-        },
-      }),
-    )
+  const upstream = vi.fn().mockResolvedValue(
+    new Response('{"dataset_version":"pinned"}', {
+      headers: {
+        'Content-Type': 'application/json',
+        'Set-Cookie': 'secret=value',
+        'Cache-Control': 'public, max-age=60',
+      },
+    }),
+  )
   vi.stubGlobal('fetch', upstream)
   const response = await GET(
     new Request('http://localhost:5173/api/v1/meta?dataset_version=pinned', {
@@ -65,14 +75,12 @@ it('сохраняет 429 и Retry-After от backend', async () => {
   vi.stubEnv('FUEL_API_BASE_URL', 'https://api.example.com')
   vi.stubGlobal(
     'fetch',
-    vi
-      .fn()
-      .mockResolvedValue(
-        new Response('{"error":{"code":"RATE_LIMITED"}}', {
-          status: 429,
-          headers: { 'Retry-After': '60' },
-        }),
-      ),
+    vi.fn().mockResolvedValue(
+      new Response('{"error":{"code":"RATE_LIMITED"}}', {
+        status: 429,
+        headers: { 'Retry-After': '60' },
+      }),
+    ),
   )
   const response = await GET(request(), context())
   expect(response.status).toBe(429)

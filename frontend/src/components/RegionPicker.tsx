@@ -67,7 +67,37 @@ export default function RegionPicker({
         <ChevronDown size={15} />
       </button>
       {open && (
-        <div className="region-popover" role="dialog" aria-label={label} id={`${id}-options`}>
+        <div
+          className="region-popover"
+          role="dialog"
+          aria-label={label}
+          id={`${id}-options`}
+          onKeyDown={(event) => {
+            if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return
+            if (
+              event.target instanceof HTMLInputElement &&
+              !['ArrowDown', 'ArrowUp'].includes(event.key)
+            )
+              return
+            const options = Array.from(
+              event.currentTarget.querySelectorAll<HTMLButtonElement>('.region-options button'),
+            )
+            if (!options.length) return
+            event.preventDefault()
+            const current = options.indexOf(document.activeElement as HTMLButtonElement)
+            const next =
+              event.key === 'Home'
+                ? 0
+                : event.key === 'End'
+                  ? options.length - 1
+                  : event.key === 'ArrowDown'
+                    ? (current + 1) % options.length
+                    : current <= 0
+                      ? options.length - 1
+                      : current - 1
+            options[next].focus()
+          }}
+        >
           <div className="region-search">
             <Search size={17} />
             <input

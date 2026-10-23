@@ -1,5 +1,4 @@
 import {
-  Area,
   CartesianGrid,
   ComposedChart,
   Line,
@@ -12,7 +11,7 @@ import { CalendarDays } from 'lucide-react'
 import type { Meta, Price } from '../lib/contracts'
 import { formatDate, formatPrice } from '../lib/numbers'
 
-export const lineColors = ['#28765a', '#dcaa43', '#7187bd']
+import { lineColors } from '../lib/presentation'
 export default function PriceChart({
   series,
   meta,
@@ -65,7 +64,7 @@ export default function PriceChart({
       <div
         className="price-chart"
         role="img"
-        aria-label={`Динамика цен: ${series.map((item) => name(item.region_id)).join(', ')}. Точные значения доступны под графиком.`}
+        aria-label={`${comparison ? 'Сравнение динамики' : 'Динамика цен'}: ${series.map((item) => name(item.region_id)).join(', ')}. Точные значения доступны под графиком.`}
       >
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
@@ -73,12 +72,6 @@ export default function PriceChart({
             margin={{ top: 16, right: 18, left: 0, bottom: 5 }}
             accessibilityLayer
           >
-            <defs>
-              <linearGradient id="price-fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#4b9271" stopOpacity={0.16} />
-                <stop offset="100%" stopColor="#4b9271" stopOpacity={0.01} />
-              </linearGradient>
-            </defs>
             <CartesianGrid stroke="#e9ede9" strokeDasharray="4 5" vertical={false} />
             <XAxis
               dataKey="time"
@@ -100,7 +93,7 @@ export default function PriceChart({
               tickLine={false}
               tickMargin={16}
               minTickGap={20}
-              tick={{ fill: '#879088', fontSize: 11 }}
+              tick={{ fill: '#56625c', fontSize: 12 }}
             />
             <YAxis
               domain={[
@@ -111,14 +104,14 @@ export default function PriceChart({
               tickCount={5}
               axisLine={false}
               tickLine={false}
-              width={62}
-              tick={{ fill: '#879088', fontSize: 11 }}
+              width={68}
+              tick={{ fill: '#56625c', fontSize: 12 }}
             />
             <Tooltip
               contentStyle={{
                 border: '1px solid #e4e9e2',
-                borderRadius: 12,
-                boxShadow: '0 6px 30px #173b2410',
+                borderRadius: 6,
+                boxShadow: '0 4px 16px #172c1e15',
                 fontSize: 12,
               }}
               labelFormatter={(value) =>
@@ -128,18 +121,6 @@ export default function PriceChart({
               filterNull
               cursor={{ stroke: '#acb9ad', strokeDasharray: '4 4' }}
             />
-            {!comparison && (
-              <Area
-                type="linear"
-                dataKey={series[0].region_id}
-                fill="url(#price-fill)"
-                stroke="none"
-                connectNulls={false}
-                tooltipType="none"
-                legendType="none"
-                isAnimationActive={false}
-              />
-            )}
             {series.map((item, index) => (
               <Line
                 key={item.region_id}
@@ -160,7 +141,12 @@ export default function PriceChart({
         <span>Еженедельные наблюдения · без интерполяции</span>
         <details>
           <summary>Точные значения</summary>
-          <div className="table-scroll">
+          <div
+            className="table-scroll"
+            role="region"
+            aria-label="Точные цены по датам"
+            tabIndex={0}
+          >
             <table>
               <thead>
                 <tr>

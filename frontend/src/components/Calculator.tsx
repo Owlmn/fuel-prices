@@ -1,12 +1,4 @@
-import {
-  ArrowUpRight,
-  Calculator as CalculatorIcon,
-  Check,
-  Fuel,
-  Plus,
-  Tractor,
-  Trash2,
-} from 'lucide-react'
+import { Fuel, Plus, Tractor, Trash2 } from 'lucide-react'
 import type { Comparison, Meta, Price } from '../lib/contracts'
 import {
   calculate,
@@ -46,18 +38,14 @@ export default function Calculator({
     <div className={expanded ? 'calculator-expanded' : 'budget-card'}>
       <div className="section-heading">
         <div>
-          <span className="eyebrow">ПЛАНИРОВАНИЕ ЗАКУПКИ</span>
           <h2>{expanded ? 'Рассчитайте заправку' : 'Бюджет заправки'}</h2>
         </div>
-        <span className="calculator-icon">
-          <CalculatorIcon size={21} />
-        </span>
       </div>
       {!expanded && (
         <p className="budget-intro">
-          Сколько понадобится на топливо
-          <br />
-          по выбранной цене?
+          {state.priceMode === 'custom'
+            ? 'Стоимость по введённой вами цене.'
+            : 'Объём × средняя цена региона.'}
         </p>
       )}
       {expanded && (
@@ -270,14 +258,10 @@ export default function Calculator({
       </p>
       {!expanded && (
         <button className="budget-button" onClick={onExpand}>
-          Подробный расчёт
-          <ArrowUpRight size={18} />
+          Открыть калькулятор
         </button>
       )}
-      <p className="budget-note">
-        <Check size={14} />
-        Доставка и условия поставщика не учтены
-      </p>
+      <p className="budget-note">Доставка и условия поставщика не учтены</p>
       {expanded && (
         <>
           <div className="soft-divider" />
@@ -287,7 +271,12 @@ export default function Calculator({
             здесь не используется.
           </p>
           {comparison?.comparable && result.volume ? (
-            <div className="table-scroll">
+            <div
+              className="table-scroll"
+              role="region"
+              aria-label="Бюджет по регионам"
+              tabIndex={0}
+            >
               <table>
                 <thead>
                   <tr>
