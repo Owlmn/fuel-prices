@@ -29,3 +29,8 @@ backend/exports/
 **/out/
 **/.vercel/
 **/next-env.d.ts
+**/AGENTS.md
+/ТЗ*.md
+/backend/docs/
+/frontend/docs/
+/backend/migrations/README
