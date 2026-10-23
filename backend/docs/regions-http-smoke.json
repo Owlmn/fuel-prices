@@ -1,0 +1,13 @@
+{
+  "dataset_version": "2bd2f525aca0456890c427d004770b62",
+  "regions": 85,
+  "coverage_series": 255,
+  "observations": 3315,
+  "history_weeks": 13,
+  "http_status": 200,
+  "old_version_preserved": true,
+  "parallel_clients": 10,
+  "requests": 30,
+  "p95_ms": 141.94,
+  "environment": "Windows/Python 3.14 localhost; not a VPS benchmark"
+}

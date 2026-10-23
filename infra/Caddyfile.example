@@ -1,0 +1,13 @@
+# Replace with an actual DNS name pointing to the VPS.
+# Inspect existing listeners and config before installing this site.
+api.example.org {
+    encode gzip
+    reverse_proxy 127.0.0.1:8011
+    log {
+        output file /var/log/caddy/fuel-access.log {
+            roll_size 10MiB
+            roll_keep 2
+        }
+        format json
+    }
+}

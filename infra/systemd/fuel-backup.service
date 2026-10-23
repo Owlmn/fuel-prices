@@ -1,0 +1,22 @@
+[Unit]
+Description=Fuel Monitor consistent daily backup
+
+[Service]
+Type=oneshot
+User=fuelmon
+Group=fuelmon
+WorkingDirectory=/opt/fuel-monitor/backend
+EnvironmentFile=/etc/fuel-monitor.env
+ExecStart=/opt/fuel-monitor/backend/.venv/bin/python -m app.maintenance
+StateDirectory=fuel-monitor
+LogsDirectory=fuel-monitor
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+MemoryMax=128M
+CPUQuota=20%
+Nice=10
+StandardOutput=append:/var/log/fuel-monitor/backup.log
+StandardError=append:/var/log/fuel-monitor/backup.log

@@ -1,0 +1,11 @@
+/var/log/fuel-monitor/*.log {
+    daily
+    maxsize 10M
+    rotate 2
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+    su fuelmon fuelmon
+}

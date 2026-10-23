@@ -1,0 +1,10 @@
+[Unit]
+Description=Back up Fuel Monitor after daily collection
+
+[Timer]
+OnCalendar=*-*-* 07:30:00 UTC
+Persistent=true
+Unit=fuel-backup.service
+
+[Install]
+WantedBy=timers.target

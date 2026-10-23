@@ -1,0 +1,219 @@
+{
+  "run_id": "613318dfb458452ca59f8f6cb06d3494",
+  "status": "needs_review",
+  "documents": 13,
+  "dataset_version": "2bd2f525aca0456890c427d004770b62",
+  "tls_verified": null,
+  "validation": {
+    "issues": [
+      {
+        "code": "PRICE_JUMP",
+        "region": "crimea_republic",
+        "fuel": "ai92",
+        "date": "2026-08-03",
+        "percent": "15.14599489928694113360745329"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "crimea_republic",
+        "fuel": "ai92",
+        "date": "2026-08-24",
+        "percent": "15.95411887382690302398331595"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "crimea_republic",
+        "fuel": "ai92",
+        "date": "2026-09-21",
+        "percent": "10.46136473624778190030650105"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "crimea_republic",
+        "fuel": "ai95",
+        "date": "2026-08-03",
+        "percent": "14.69725940089228808158062460"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "crimea_republic",
+        "fuel": "ai95",
+        "date": "2026-09-07",
+        "percent": "12.63234552686124026665172819"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "crimea_republic",
+        "fuel": "diesel",
+        "date": "2026-08-03",
+        "percent": "12.88329519450800915331807780"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "crimea_republic",
+        "fuel": "diesel",
+        "date": "2026-08-10",
+        "percent": "28.59469398476490675072235356"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "dagestan_republic",
+        "fuel": "ai92",
+        "date": "2026-08-31",
+        "percent": "13.09548149662645675730934369"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "dagestan_republic",
+        "fuel": "ai95",
+        "date": "2026-08-31",
+        "percent": "14.33925997116770783277270543"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "ingushetia_republic",
+        "fuel": "ai92",
+        "date": "2026-09-14",
+        "percent": "11.78555098308184727937814358"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "ingushetia_republic",
+        "fuel": "ai95",
+        "date": "2026-09-14",
+        "percent": "14.45221445221445221445221445"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "jewish_autonomous_oblast",
+        "fuel": "ai95",
+        "date": "2026-10-12",
+        "percent": "10.31266421439831844456121913"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "sevastopol",
+        "fuel": "ai92",
+        "date": "2026-08-03",
+        "percent": "18.30144167758846657929226737"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "sevastopol",
+        "fuel": "ai92",
+        "date": "2026-08-10",
+        "percent": "11.91606776180698151950718686"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "sevastopol",
+        "fuel": "ai95",
+        "date": "2026-08-03",
+        "percent": "13.08798213371795468292002047"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "sevastopol",
+        "fuel": "ai95",
+        "date": "2026-09-07",
+        "percent": "17.70450430679760794425851758"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "sevastopol",
+        "fuel": "diesel",
+        "date": "2026-08-03",
+        "percent": "13.48393106660456450861667443"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "sevastopol",
+        "fuel": "diesel",
+        "date": "2026-08-10",
+        "percent": "12.76985195154777927321668910"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "sevastopol",
+        "fuel": "diesel",
+        "date": "2026-09-14",
+        "percent": "11.80327868852459016393442623"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "sevastopol",
+        "fuel": "diesel",
+        "date": "2026-09-28",
+        "percent": "10.25739531310026892047637342"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "tyumen_oblast",
+        "fuel": "ai92",
+        "date": "2026-08-03",
+        "percent": "10.00733521953264172692025568"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "tyumen_oblast",
+        "fuel": "ai92",
+        "date": "2026-08-31",
+        "percent": "16.09805408137477887288349760"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "tyumen_oblast",
+        "fuel": "ai95",
+        "date": "2026-08-31",
+        "percent": "23.87539090690401732018282415"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "tyumen_oblast",
+        "fuel": "ai95",
+        "date": "2026-09-07",
+        "percent": "10.53500339838819302844936402"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "tyumen_oblast",
+        "fuel": "ai95",
+        "date": "2026-10-12",
+        "percent": "10.11349075599487461101958631"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "tyumen_oblast",
+        "fuel": "diesel",
+        "date": "2026-08-10",
+        "percent": "11.50941592581971130867029921"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "vologda_oblast",
+        "fuel": "ai92",
+        "date": "2026-08-03",
+        "percent": "11.21868570737020452620113760"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "vologda_oblast",
+        "fuel": "ai95",
+        "date": "2026-08-03",
+        "percent": "13.78560556642748423570341379"
+      },
+      {
+        "code": "PRICE_JUMP",
+        "region": "vologda_oblast",
+        "fuel": "diesel",
+        "date": "2026-08-03",
+        "percent": "11.11922394909773651820173151"
+      }
+    ],
+    "missing": [],
+    "observations": 3315,
+    "new_observations": 3081,
+    "changed_observations": 0,
+    "fingerprint": "472a82af4f10b32c6e4950e2c897a034b034c276ad363884f22cf64dc1cfbb47"
+  }
+}

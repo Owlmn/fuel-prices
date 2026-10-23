@@ -1,0 +1,10 @@
+[Unit]
+Description=Check Rosstat fuel publications daily
+
+[Timer]
+OnCalendar=*-*-* 07:00:00 UTC
+Persistent=true
+Unit=fuel-collector.service
+
+[Install]
+WantedBy=timers.target
