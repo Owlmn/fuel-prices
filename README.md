@@ -5,7 +5,7 @@ Backend и адаптивный frontend: графики, сравнение р�
 
 - Данные Росстата: 85 регионов, ДТ, АИ-92 и АИ-95.
 - История цен, сравнение на общие даты, проверка обновлений.
-- Стек: React, TypeScript, Vite; Python, FastAPI, SQLite/WAL, Alembic.
+- Стек: Next.js App Router, React, TypeScript; Python, FastAPI, SQLite/WAL, Alembic.
 
 ## Запуск
 

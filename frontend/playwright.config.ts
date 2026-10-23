@@ -17,7 +17,7 @@ export default defineConfig({
     timezoneId: 'Asia/Vladivostok',
   },
   webServer: {
-    command: 'npm run dev',
+    command: process.env.CI ? 'npm run start' : 'npm run dev',
     url: 'http://127.0.0.1:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,

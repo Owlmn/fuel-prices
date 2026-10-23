@@ -19,12 +19,14 @@ afterEach(() => {
   vi.unstubAllEnvs()
 })
 
-it('сборка без адреса API явно переходит к резерву, не обращаясь к несуществующему API', async () => {
-  vi.stubEnv('PROD', true)
-  const request = vi.fn()
+it('обращается к серверному API на том же домене и закрепляет версию', async () => {
+  const request = vi.fn().mockResolvedValue(new Response(JSON.stringify(snapshot.meta)))
   vi.stubGlobal('fetch', request)
-  await expect(getMeta(new AbortController().signal)).rejects.toMatchObject({ unavailable: true })
-  expect(request).not.toHaveBeenCalled()
+  await getMeta(new AbortController().signal, snapshot.meta.dataset_version)
+  expect(request).toHaveBeenCalledWith(
+    `/api/v1/meta?dataset_version=${snapshot.meta.dataset_version}`,
+    expect.anything(),
+  )
 })
 
 it('не принимает ответ другой версии или региона', async () => {

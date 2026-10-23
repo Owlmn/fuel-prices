@@ -25,3 +25,7 @@ backend/exports/
 **/test-results/
 **/.vite/
 **/*.tsbuildinfo
+**/.next/
+**/out/
+**/.vercel/
+**/next-env.d.ts

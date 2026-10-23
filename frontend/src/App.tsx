@@ -1,3 +1,5 @@
+'use client'
+
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
@@ -159,7 +161,9 @@ export default function App() {
           </>
         ) : (
           <>
-            <p role="alert">{error}</p>
+            <p role="alert" aria-label="Ошибка загрузки данных">
+              {error}
+            </p>
             <div className="startup-actions">
               <button className="primary-button" onClick={() => void connect()}>
                 <RefreshCw size={16} />
@@ -463,7 +467,7 @@ function Workspace({
                 </p>
               )}
               {queryError && !(queryError instanceof ApiError && queryError.unavailable) ? (
-                <div className="panel error-panel" role="alert">
+                <div className="panel error-panel" role="alert" aria-label="Ошибка загрузки данных">
                   <CircleHelp size={28} />
                   <h2>Не удалось показать данные</h2>
                   <p>{queryError.message}</p>

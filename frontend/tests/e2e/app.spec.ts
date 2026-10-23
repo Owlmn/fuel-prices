@@ -8,6 +8,18 @@ const snapshot = JSON.parse(
 )
 const version = snapshot.meta.dataset_version as string
 
+test('production без backend показывает резерв, серверные методы остаются только для чтения', async ({
+  page,
+}) => {
+  test.skip(!process.env.CI, 'Checks the production server started in CI')
+  expect((await page.request.get('/api/v1/meta')).status()).toBe(503)
+  expect((await page.request.post('/api/v1/prices')).status()).toBe(405)
+  expect((await page.request.get('/api/v1/publish')).status()).toBe(404)
+  await page.goto('/')
+  await expect(page.getByText(/Резервные данные на/)).toBeVisible()
+  await expect(page.getByTestId('budget-total')).toContainText('93 370,00')
+})
+
 test('реальный API: цены, фильтры и восстановление ссылки', async ({ page }) => {
   test.skip(!!process.env.CI, 'Live API is checked locally')
   const errors: string[] = []
@@ -87,7 +99,9 @@ test('резерв загружается при недоступном API бе
 test('недоступная закреплённая версия не заменяется резервом автоматически', async ({ page }) => {
   await page.route('**/api/v1/**', (route) => route.abort())
   await page.goto('/?dataset_version=another-version')
-  await expect(page.getByRole('alert')).toContainText('В резерве другая версия')
+  await expect(page.getByRole('alert', { name: 'Ошибка загрузки данных' })).toContainText(
+    'В резерве другая версия',
+  )
   await expect(page.getByRole('heading', { name: 'Как менялась цена' })).toHaveCount(0)
   await page.getByRole('button', { name: /Открыть резерв на/ }).click()
   await expect(page).toHaveURL(new RegExp(`dataset_version=${version}`))
@@ -99,14 +113,18 @@ test('404 и нарушение контракта не маскируются �
     route.fulfill({ status: 404, json: { error: { code: 'DATASET_NOT_FOUND' } } }),
   )
   await page.goto('/?dataset_version=missing')
-  await expect(page.getByRole('alert')).toContainText('Выбранная версия данных недоступна')
+  await expect(page.getByRole('alert', { name: 'Ошибка загрузки данных' })).toContainText(
+    'Выбранная версия данных недоступна',
+  )
   await expect(page.getByText(/Резервные данные на/)).toHaveCount(0)
   await page.unrouteAll()
   await page.route('**/api/v1/meta**', (route) =>
     route.fulfill({ json: { ...snapshot.meta, schema_version: '2' } }),
   )
   await page.goto('/')
-  await expect(page.getByRole('alert')).toContainText('не соответствует контракту')
+  await expect(page.getByRole('alert', { name: 'Ошибка загрузки данных' })).toContainText(
+    'не соответствует контракту',
+  )
   await expect(page.getByText(/Резервные данные на/)).toHaveCount(0)
 })
 
@@ -117,7 +135,9 @@ test('запросы закрепляют версию; ошибка ответ�
     route.fulfill({ status: 422, json: { error: { code: 'INVALID_REQUEST' } } }),
   )
   await page.goto('/')
-  await expect(page.getByRole('alert')).toContainText('не соответствует контракту')
+  await expect(page.getByRole('alert', { name: 'Ошибка загрузки данных' })).toContainText(
+    'не соответствует контракту',
+  )
   await expect(page.getByTestId('budget-total')).toHaveCount(0)
 })
 

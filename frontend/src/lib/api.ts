@@ -12,7 +12,6 @@ import {
 } from './contracts'
 import { snapshotComparison, snapshotPrice } from './snapshot'
 
-const base = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -33,7 +32,7 @@ async function request<T>(path: string, schema: ZodType<T>, signal: AbortSignal)
     signal.throwIfAborted()
     let unavailable: ApiError
     try {
-      const response = await fetch(`${base}/api/v1/${path}`, {
+      const response = await fetch(`/api/v1/${path}`, {
         signal: AbortSignal.any([signal, AbortSignal.timeout(2000)]),
         cache: 'no-cache',
       })
@@ -76,7 +75,6 @@ async function request<T>(path: string, schema: ZodType<T>, signal: AbortSignal)
   throw new ApiError('Сервис недоступен', true)
 }
 export async function getMeta(signal: AbortSignal, version?: string): Promise<Meta> {
-  if (!base && import.meta.env.PROD) throw new ApiError('Сервис данных ещё не подключён', true)
   const meta = await request(
     `meta${version ? `?dataset_version=${encodeURIComponent(version)}` : ''}`,
     metaSchema,
