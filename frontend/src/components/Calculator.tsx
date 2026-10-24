@@ -347,32 +347,34 @@ export default function Calculator({
         </button>
       )}
       <p className="budget-note">Доставка и условия поставщика не учтены</p>
-      <section className="budget-change" aria-label="Влияние цены на бюджет">
-        <h3>Как цена повлияла на бюджет</h3>
-        {change ? (
-          <>
-            <p>
-              Для {formatVolume(result.volume!)} л:{' '}
-              <strong data-testid="budget-change">{formatSigned(change.difference)} ₽</strong>
-            </p>
+      {expanded && (
+        <section className="budget-change" aria-label="Влияние цены на бюджет">
+          <h3>Как цена повлияла на бюджет</h3>
+          {change ? (
+            <>
+              <p>
+                Для {formatVolume(result.volume!)} л:{' '}
+                <strong data-testid="budget-change">{formatSigned(change.difference)} ₽</strong>
+              </p>
+              <p className="muted small">
+                {formatDate(change.from, true)} — {formatDate(change.to, true)} ·{' '}
+                {formatPrice(change.before)} → {formatPrice(change.after)} ₽
+              </p>
+              <p className="muted small">
+                По средним региональным ценам на эти даты.{' '}
+                {state.priceMode === 'custom' ? 'Ваша цена здесь не используется. ' : ''}Это
+                изменение расчётной стоимости, не прогноз.
+              </p>
+            </>
+          ) : (
             <p className="muted small">
-              {formatDate(change.from, true)} — {formatDate(change.to, true)} ·{' '}
-              {formatPrice(change.before)} → {formatPrice(change.after)} ₽
+              {!result.volume
+                ? 'Введите корректный объём.'
+                : 'Для оценки изменения нужны цены минимум на две даты выбранного периода.'}
             </p>
-            <p className="muted small">
-              По средним региональным ценам на эти даты.{' '}
-              {state.priceMode === 'custom' ? 'Ваша цена здесь не используется. ' : ''}Это изменение
-              расчётной стоимости, не прогноз.
-            </p>
-          </>
-        ) : (
-          <p className="muted small">
-            {!result.volume
-              ? 'Введите корректный объём.'
-              : 'Для оценки изменения нужны цены минимум на две даты выбранного периода.'}
-          </p>
-        )}
-      </section>
+          )}
+        </section>
+      )}
       {expanded && (
         <button
           className="secondary-button export-calculation"

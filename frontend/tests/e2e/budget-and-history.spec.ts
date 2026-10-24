@@ -17,16 +17,26 @@ for (const width of [390, 1440]) {
     await page.getByRole('button', { name: 'Год', exact: true }).click()
     await expect(page).toHaveURL(/from=2025-10-19&to=2026-10-19/)
     await expect(page.getByRole('heading', { name: 'Как менялась цена' })).toBeVisible()
-    const price = snapshotPrice(snapshot, 'primorsky_krai', 'diesel', '2025-10-19', '2026-10-19')
+    await expect(page.getByRole('region', { name: 'Влияние цены на бюджет' })).toHaveCount(0)
+    if (width > 1100) {
+      const chart = await page.locator('.overview-grid .chart-panel').boundingBox()
+      const budget = await page.locator('.overview-grid .budget-card').boundingBox()
+      expect(Math.abs(chart!.height - budget!.height)).toBeLessThan(1)
+      expect(Math.abs(chart!.y - budget!.y)).toBeLessThan(1)
+    }
+    await page
+      .locator('.overview-grid')
+      .screenshot({ path: `test-results/overview-budget-${width}.png` })
+    const price = snapshotPrice(snapshot, 'primorsky_krai', 'diesel', '2026-04-19', '2026-10-19')
     const change = budgetChange(new Decimal(1000), price.observations)!
-    await expect(page.getByTestId('budget-change')).toHaveText(
-      `${formatSigned(change.difference)} ₽`,
-    )
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
     if (width < 700) await page.getByLabel('Выбрать даты наблюдений').click()
     await page.getByRole('button', { name: '6 месяцев', exact: true }).click()
     await expect(page).toHaveURL(/from=2026-04-19/)
     await page.getByRole('button', { name: 'Рассчитать заправку', exact: true }).click()
+    await expect(page.getByTestId('budget-change')).toHaveText(
+      `${formatSigned(change.difference)} ₽`,
+    )
     await page.getByRole('button', { name: 'Заправка техники', exact: true }).click()
     await page.getByRole('button', { name: 'До полного бака', exact: true }).click()
     await page.getByRole('textbox', { name: 'Объём бака, л', exact: true }).fill('200')
@@ -79,6 +89,8 @@ test('год недоступен в старом снимке; одна точ�
   await page.route('**/snapshot.json', (route) => route.fulfill({ json: short }))
   await page.goto('/?region=primorsky_krai&fuel=diesel&from=2026-10-19&to=2026-10-19')
   await expect(page.getByRole('button', { name: 'Год', exact: true })).toBeDisabled()
+  await expect(page.getByRole('region', { name: 'Влияние цены на бюджет' })).toHaveCount(0)
+  await page.getByRole('button', { name: 'Рассчитать заправку', exact: true }).click()
   await expect(
     page.getByText('Для оценки изменения нужны цены минимум на две даты выбранного периода.'),
   ).toBeVisible()

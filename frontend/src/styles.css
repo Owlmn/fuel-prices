@@ -767,7 +767,7 @@ main {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 300px;
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
   margin-bottom: 24px;
 }
 .comparison-grid {
