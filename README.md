@@ -224,7 +224,7 @@ npm run build
 
 ## Автор, благодарности и лицензия
 
-Автор — [Owlmn](https://github.com/Owlmn).
+Автор — **Мистреков Станислав Романович** ([Owlmn](https://github.com/Owlmn)).
 
 Источник статистики — Росстат. Постановка кейса — [стипендиальная программа РСХБ 2026–2027](https://rshbdigital.ru/stipendy/stipend-program2026-2027).
 
