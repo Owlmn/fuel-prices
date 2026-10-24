@@ -3,6 +3,7 @@ import type { Meta } from '../lib/contracts'
 import { formatDate } from '../lib/numbers'
 import { menu } from '../lib/presentation'
 import type { View } from '../lib/selection'
+import ThemeControl from './ThemeControl'
 
 export default function AppShell({
   view,
@@ -21,12 +22,19 @@ export default function AppShell({
         К содержимому
       </a>
       <aside className="sidebar">
-        <button className="brand" title="Открыть обзор цен" onClick={() => onNavigate('overview')}>
-          <img src="/favicon.svg" width="36" height="36" alt="" />
-          <span>
-            АгроТопливо<small>Цены и расчёт заправки</small>
-          </span>
-        </button>
+        <div className="sidebar-header">
+          <button
+            className="brand"
+            title="Открыть обзор цен"
+            onClick={() => onNavigate('overview')}
+          >
+            <img src="/favicon.svg" width="36" height="36" alt="" />
+            <span>
+              АгроТопливо<small>Цены и расчёт заправки</small>
+            </span>
+          </button>
+          <ThemeControl />
+        </div>
         <nav aria-label="Основная навигация">
           {menu.map((item) => (
             <button

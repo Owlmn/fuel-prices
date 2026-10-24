@@ -132,4 +132,18 @@ describe('Резерв и согласованность', () => {
     expect(read.selection.region).toBe('primorsky_krai')
     expect(read.selection.fuel).toBe('diesel')
   })
+  it('сохраняет четыре дополнительных региона в ссылке и ограничивает лишние', () => {
+    const original = {
+      ...selection,
+      compare: ['khabarovsk_krai', 'amur_oblast', 'rostov_oblast', 'sakhalin_oblast'],
+    }
+    const url = selectionUrl(original, 'comparison', snapshot.meta.dataset_version)
+    const restored = readSelection(snapshot.meta, url)
+    expect(restored.selection).toEqual(original)
+    expect(restored.corrected).toBe(false)
+    const excessive = readSelection(snapshot.meta, url + '&compare=moscow')
+    expect(excessive.selection.compare).toEqual(original.compare)
+    expect(excessive.corrected).toBe(true)
+    expect(snapshotComparison(snapshot, original).rows).toHaveLength(5)
+  })
 })

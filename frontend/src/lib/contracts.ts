@@ -1,4 +1,5 @@
 import { z } from 'zod'
+export const MAX_COMPARE_REGIONS = 4
 
 const day = z.iso.date()
 const money = z.number().int().positive().max(Number.MAX_SAFE_INTEGER)

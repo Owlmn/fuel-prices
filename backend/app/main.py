@@ -156,7 +156,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         fuel: Fuel,
         dataset_version: str,
         base_region: str,
-        regions: list[str] = Query(min_length=2, max_length=3),
+        regions: list[str] = Query(min_length=2, max_length=5),
         start: date = Query(alias="from"),
         end: date = Query(alias="to"),
     ):

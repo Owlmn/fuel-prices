@@ -72,7 +72,7 @@ export default function PriceChart({
             margin={{ top: 16, right: 18, left: 0, bottom: 5 }}
             accessibilityLayer
           >
-            <CartesianGrid stroke="#e9ede9" strokeDasharray="4 5" vertical={false} />
+            <CartesianGrid stroke="var(--chart-grid)" strokeDasharray="4 5" vertical={false} />
             <XAxis
               dataKey="time"
               type="number"
@@ -93,7 +93,7 @@ export default function PriceChart({
               tickLine={false}
               tickMargin={16}
               minTickGap={20}
-              tick={{ fill: '#56625c', fontSize: 12 }}
+              tick={{ fill: 'var(--muted)', fontSize: 12 }}
             />
             <YAxis
               domain={[
@@ -105,13 +105,15 @@ export default function PriceChart({
               axisLine={false}
               tickLine={false}
               width={68}
-              tick={{ fill: '#56625c', fontSize: 12 }}
+              tick={{ fill: 'var(--muted)', fontSize: 12 }}
             />
             <Tooltip
               contentStyle={{
-                border: '1px solid #e4e9e2',
+                border: '1px solid var(--border)',
+                background: 'var(--surface)',
+                color: 'var(--ink)',
                 borderRadius: 6,
-                boxShadow: '0 4px 16px #172c1e15',
+                boxShadow: 'var(--popover-shadow)',
                 fontSize: 12,
               }}
               labelFormatter={(value) =>
@@ -119,7 +121,7 @@ export default function PriceChart({
               }
               formatter={(value, key) => [`${formatPrice(Number(value))} ₽/л`, name(String(key))]}
               filterNull
-              cursor={{ stroke: '#acb9ad', strokeDasharray: '4 4' }}
+              cursor={{ stroke: 'var(--muted)', strokeDasharray: '4 4' }}
             />
             {series.map((item, index) => (
               <Line
@@ -129,8 +131,8 @@ export default function PriceChart({
                 stroke={lineColors[index]}
                 strokeWidth={2.5}
                 connectNulls={false}
-                dot={{ r: 3.5, fill: 'white', strokeWidth: 2 }}
-                activeDot={{ r: 6, strokeWidth: 3, stroke: 'white' }}
+                dot={{ r: 3.5, fill: 'var(--surface)', strokeWidth: 2 }}
+                activeDot={{ r: 6, strokeWidth: 3, stroke: 'var(--surface)' }}
                 isAnimationActive={false}
               />
             ))}

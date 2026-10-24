@@ -1,42 +1,186 @@
 {
   "observations": [
-    { "date": "2026-10-05", "prices": { "primorsky_krai": 8000, "khabarovsk_krai": 8200, "amur_oblast": null } },
-    { "date": "2026-10-12", "prices": { "primorsky_krai": 8100, "khabarovsk_krai": null, "amur_oblast": 7900 } },
-    { "date": "2026-10-19", "prices": { "primorsky_krai": 8200, "khabarovsk_krai": 8400, "amur_oblast": 8000 } }
+    {
+      "date": "2026-10-05",
+      "prices": {
+        "primorsky_krai": 8000,
+        "khabarovsk_krai": 8200,
+        "amur_oblast": null,
+        "rostov_oblast": 8000,
+        "sakhalin_oblast": 9000
+      }
+    },
+    {
+      "date": "2026-10-12",
+      "prices": {
+        "primorsky_krai": 8100,
+        "khabarovsk_krai": null,
+        "amur_oblast": 7900,
+        "rostov_oblast": 8050,
+        "sakhalin_oblast": 9100
+      }
+    },
+    {
+      "date": "2026-10-19",
+      "prices": {
+        "primorsky_krai": 8200,
+        "khabarovsk_krai": 8400,
+        "amur_oblast": 8000,
+        "rostov_oblast": 8100,
+        "sakhalin_oblast": 9200
+      }
+    }
   ],
   "cases": [
     {
       "name": "two_common_dates",
-      "compare": ["khabarovsk_krai"], "from": "2026-10-05", "to": "2026-10-19",
-      "common_dates": ["2026-10-05", "2026-10-19"], "reason": null,
+      "compare": ["khabarovsk_krai"],
+      "from": "2026-10-05",
+      "to": "2026-10-19",
+      "common_dates": ["2026-10-05", "2026-10-19"],
+      "reason": null,
       "rows": [
-        { "region_id": "primorsky_krai", "price_kopecks": 8200, "difference_kopecks": 0, "difference_percent": "0.00", "change_kopecks": 200, "change_percent": "2.50" },
-        { "region_id": "khabarovsk_krai", "price_kopecks": 8400, "difference_kopecks": 200, "difference_percent": "2.44", "change_kopecks": 200, "change_percent": "2.44" }
+        {
+          "region_id": "primorsky_krai",
+          "price_kopecks": 8200,
+          "difference_kopecks": 0,
+          "difference_percent": "0.00",
+          "change_kopecks": 200,
+          "change_percent": "2.50"
+        },
+        {
+          "region_id": "khabarovsk_krai",
+          "price_kopecks": 8400,
+          "difference_kopecks": 200,
+          "difference_percent": "2.44",
+          "change_kopecks": 200,
+          "change_percent": "2.44"
+        }
       ]
     },
     {
       "name": "negative_difference",
-      "compare": ["amur_oblast"], "from": "2026-10-05", "to": "2026-10-19",
-      "common_dates": ["2026-10-12", "2026-10-19"], "reason": null,
+      "compare": ["amur_oblast"],
+      "from": "2026-10-05",
+      "to": "2026-10-19",
+      "common_dates": ["2026-10-12", "2026-10-19"],
+      "reason": null,
       "rows": [
-        { "region_id": "primorsky_krai", "price_kopecks": 8200, "difference_kopecks": 0, "difference_percent": "0.00", "change_kopecks": 100, "change_percent": "1.23" },
-        { "region_id": "amur_oblast", "price_kopecks": 8000, "difference_kopecks": -200, "difference_percent": "-2.44", "change_kopecks": 100, "change_percent": "1.27" }
+        {
+          "region_id": "primorsky_krai",
+          "price_kopecks": 8200,
+          "difference_kopecks": 0,
+          "difference_percent": "0.00",
+          "change_kopecks": 100,
+          "change_percent": "1.23"
+        },
+        {
+          "region_id": "amur_oblast",
+          "price_kopecks": 8000,
+          "difference_kopecks": -200,
+          "difference_percent": "-2.44",
+          "change_kopecks": 100,
+          "change_percent": "1.27"
+        }
       ]
     },
     {
       "name": "one_common_date",
-      "compare": ["khabarovsk_krai", "amur_oblast"], "from": "2026-10-05", "to": "2026-10-19",
-      "common_dates": ["2026-10-19"], "reason": "ONE_COMMON_DATE",
+      "compare": ["khabarovsk_krai", "amur_oblast"],
+      "from": "2026-10-05",
+      "to": "2026-10-19",
+      "common_dates": ["2026-10-19"],
+      "reason": "ONE_COMMON_DATE",
       "rows": [
-        { "region_id": "primorsky_krai", "price_kopecks": 8200, "difference_kopecks": 0, "difference_percent": "0.00", "change_kopecks": null, "change_percent": null },
-        { "region_id": "khabarovsk_krai", "price_kopecks": 8400, "difference_kopecks": 200, "difference_percent": "2.44", "change_kopecks": null, "change_percent": null },
-        { "region_id": "amur_oblast", "price_kopecks": 8000, "difference_kopecks": -200, "difference_percent": "-2.44", "change_kopecks": null, "change_percent": null }
+        {
+          "region_id": "primorsky_krai",
+          "price_kopecks": 8200,
+          "difference_kopecks": 0,
+          "difference_percent": "0.00",
+          "change_kopecks": null,
+          "change_percent": null
+        },
+        {
+          "region_id": "khabarovsk_krai",
+          "price_kopecks": 8400,
+          "difference_kopecks": 200,
+          "difference_percent": "2.44",
+          "change_kopecks": null,
+          "change_percent": null
+        },
+        {
+          "region_id": "amur_oblast",
+          "price_kopecks": 8000,
+          "difference_kopecks": -200,
+          "difference_percent": "-2.44",
+          "change_kopecks": null,
+          "change_percent": null
+        }
       ]
     },
     {
       "name": "no_common_dates",
-      "compare": ["khabarovsk_krai", "amur_oblast"], "from": "2026-10-05", "to": "2026-10-12",
-      "common_dates": [], "reason": "NO_COMMON_DATES", "rows": []
+      "compare": ["khabarovsk_krai", "amur_oblast"],
+      "from": "2026-10-05",
+      "to": "2026-10-12",
+      "common_dates": [],
+      "reason": "NO_COMMON_DATES",
+      "rows": []
+    },
+    {
+      "name": "five_regions_one_common_date",
+      "compare": [
+        "khabarovsk_krai",
+        "amur_oblast",
+        "rostov_oblast",
+        "sakhalin_oblast"
+      ],
+      "from": "2026-10-05",
+      "to": "2026-10-19",
+      "common_dates": ["2026-10-19"],
+      "reason": "ONE_COMMON_DATE",
+      "rows": [
+        {
+          "region_id": "primorsky_krai",
+          "price_kopecks": 8200,
+          "difference_kopecks": 0,
+          "difference_percent": "0.00",
+          "change_kopecks": null,
+          "change_percent": null
+        },
+        {
+          "region_id": "khabarovsk_krai",
+          "price_kopecks": 8400,
+          "difference_kopecks": 200,
+          "difference_percent": "2.44",
+          "change_kopecks": null,
+          "change_percent": null
+        },
+        {
+          "region_id": "amur_oblast",
+          "price_kopecks": 8000,
+          "difference_kopecks": -200,
+          "difference_percent": "-2.44",
+          "change_kopecks": null,
+          "change_percent": null
+        },
+        {
+          "region_id": "rostov_oblast",
+          "price_kopecks": 8100,
+          "difference_kopecks": -100,
+          "difference_percent": "-1.22",
+          "change_kopecks": null,
+          "change_percent": null
+        },
+        {
+          "region_id": "sakhalin_oblast",
+          "price_kopecks": 9200,
+          "difference_kopecks": 1000,
+          "difference_percent": "12.20",
+          "change_kopecks": null,
+          "change_percent": null
+        }
+      ]
     }
   ]
 }

@@ -134,3 +134,46 @@ def test_rate_limit(settings, published):
         assert limited.status_code == 429
         assert limited.headers["access-control-allow-origin"] == "http://localhost:5173"
         assert client.get("/health/live").status_code == 200
+
+
+def test_comparison_accepts_five_regions_and_rejects_six(client, published):
+    params = parameters(published)
+    params.pop("region")
+    regions = [
+        "primorsky_krai",
+        "khabarovsk_krai",
+        "amur_oblast",
+        "rostov_oblast",
+        "sakhalin_oblast",
+    ]
+    params.update(base_region=regions[0], regions=regions)
+    response = client.get("/api/v1/comparison", params=params)
+    assert response.status_code == 200
+    assert [row["region_id"] for row in response.json()["rows"]] == regions
+    assert len(response.json()["series"]) == 5
+    params["regions"] = [*regions, "moscow"]
+    assert client.get("/api/v1/comparison", params=params).status_code == 422
+    params["regions"] = [regions[0], *regions[:4]]
+    assert (
+        client.get("/api/v1/comparison", params=params).json()["error"]["code"] == "INVALID_REGIONS"
+    )
+
+
+def test_five_regions_use_the_last_common_date(settings, client, published):
+    result = ingest_documents(settings, [doc(overrides={("rostov_oblast", "diesel"): None})])
+    params = parameters(result["dataset_version"])
+    params.pop("region")
+    params.update(
+        base_region="primorsky_krai",
+        regions=[
+            "primorsky_krai",
+            "khabarovsk_krai",
+            "amur_oblast",
+            "rostov_oblast",
+            "sakhalin_oblast",
+        ],
+    )
+    response = client.get("/api/v1/comparison", params=params)
+    assert response.status_code == 200
+    assert response.json()["comparison_end"] == "2026-10-12"
+    assert len(response.json()["rows"]) == 5

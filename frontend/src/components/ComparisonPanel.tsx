@@ -11,6 +11,7 @@ export default function ComparisonPanel({
   onChange,
   onExpand,
   overview,
+  loading = false,
 }: {
   meta: Meta
   comparison?: Comparison
@@ -18,6 +19,7 @@ export default function ComparisonPanel({
   onChange: (patch: Partial<Selection>) => void
   onExpand: () => void
   overview: boolean
+  loading?: boolean
 }) {
   return (
     <section className="panel comparison-panel">
@@ -27,7 +29,7 @@ export default function ComparisonPanel({
           <p>
             {comparison?.comparable
               ? `Сравнение на общую дату ${formatDate(comparison.comparison_end, true)}`
-              : 'Выберите до двух регионов к базовому'}
+              : 'Выберите до четырёх регионов к базовому'}
           </p>
         </div>
         {overview && (
@@ -36,8 +38,12 @@ export default function ComparisonPanel({
           </button>
         )}
       </div>
-      {overview && <CompareControls meta={meta} selection={selection} onChange={onChange} />}
-      {comparison?.comparable ? (
+      <CompareControls meta={meta} selection={selection} onChange={onChange} />
+      {loading ? (
+        <p className="comparison-loading" role="status">
+          Обновляем сравнение…
+        </p>
+      ) : comparison?.comparable ? (
         <div
           className="table-scroll comparison-table-wrap"
           role="region"

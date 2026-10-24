@@ -304,13 +304,6 @@ export default function Workspace({
                             <Info size={14} />О данных
                           </button>
                         </div>
-                        {view === 'comparison' && (
-                          <CompareControls
-                            meta={meta}
-                            selection={selection}
-                            onChange={updateSelection}
-                          />
-                        )}
                         <PriceChart
                           meta={meta}
                           series={
@@ -346,19 +339,22 @@ export default function Workspace({
                         />
                       )}
                     </div>
-                    <ComparisonPanel
-                      meta={meta}
-                      comparison={comparison}
-                      selection={selection}
-                      onChange={updateSelection}
-                      onExpand={() => changeView('comparison')}
-                      overview={view === 'overview'}
-                    />
                   </>
                 )}
               </>
             )}
           </>
+        )}
+        {(view === 'overview' || view === 'comparison') && (
+          <ComparisonPanel
+            meta={meta}
+            comparison={queryError ? undefined : comparison}
+            selection={selection}
+            onChange={updateSelection}
+            onExpand={() => changeView('comparison')}
+            overview={view === 'overview'}
+            loading={loading}
+          />
         )}
         {view === 'sources' && <Sources meta={meta} mode={dataset.mode} />}
         <footer className="page-footer">

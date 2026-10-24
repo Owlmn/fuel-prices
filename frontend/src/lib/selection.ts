@@ -1,4 +1,4 @@
-import { fuelSchema, type Meta, type Selection } from './contracts'
+import { fuelSchema, MAX_COMPARE_REGIONS, type Meta, type Selection } from './contracts'
 
 export type View = 'overview' | 'comparison' | 'calculator' | 'sources'
 export function periodStart(end: string, weeks: number, min: string) {
@@ -37,7 +37,7 @@ export function readSelection(meta: Meta, search = window.location.search) {
   )
   const compare = [...new Set(requested.filter((id) => validRegion(id) && id !== region))].slice(
     0,
-    2,
+    MAX_COMPARE_REGIONS,
   )
   const initialCompare = params.has('compare') ? compare : defaults
   const corrected =

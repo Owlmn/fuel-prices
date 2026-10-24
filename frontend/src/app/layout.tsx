@@ -14,6 +14,7 @@ import '@fontsource/golos-text/latin-400.css'
 import '@fontsource/golos-text/latin-500.css'
 import '../styles.css'
 import Providers from './providers'
+import { themeInitializationScript } from '../lib/theme'
 
 export const metadata: Metadata = {
   metadataBase: new URL(
@@ -37,7 +38,10 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, them
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ru">
+    <html lang="ru" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} />
+      </head>
       <body>
         <Providers>{children}</Providers>
       </body>
