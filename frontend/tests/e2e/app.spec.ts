@@ -145,7 +145,9 @@ test('источники открываются и имеют ссылки на 
   await page.route('**/api/v1/**', (route) => route.abort())
   await page.goto('/?view=sources')
   await expect(page.getByRole('heading', { name: 'Как читать эти данные' })).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Публикация Росстата' })).toHaveCount(13)
+  await expect(page.getByRole('link', { name: 'Публикация Росстата' })).toHaveCount(
+    snapshot.meta.sources.length,
+  )
   await expect(page.getByRole('link', { name: 'Каталог Росстата' })).toHaveAttribute(
     'href',
     'https://rosstat.gov.ru/compendium/document/50798',

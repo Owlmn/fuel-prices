@@ -4,7 +4,7 @@
 Backend и адаптивный frontend: графики, сравнение регионов и калькулятор заправки.
 
 - Данные Росстата: 85 регионов, ДТ, АИ-92 и АИ-95.
-- История цен, сравнение на общие даты, проверка обновлений.
+- Годовая история, сравнение на общие даты, расчёт долива и экспорт бюджета в CSV.
 - Стек: Next.js App Router, React, TypeScript; Python, FastAPI, SQLite/WAL, Alembic.
 
 ## Запуск
@@ -15,7 +15,7 @@ python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.lock
 Copy-Item .env.example .env
 .venv\Scripts\python.exe -m app.cli init-db
-.venv\Scripts\python.exe -m app.cli bootstrap --weeks 13
+.venv\Scripts\python.exe -m app.cli bootstrap --weeks 53
 ```
 
 Проверить первый набор и подставить его ID:

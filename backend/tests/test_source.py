@@ -1,9 +1,11 @@
+from datetime import date
+
 import httpx
 import pytest
 
 from app.collector.source import SourceClient, SourceError, validate_url
 from app.config import Settings
-from app.domain import cost_kopecks, percent
+from app.domain import cost_kopecks, expected_weeks, percent
 
 
 @pytest.mark.parametrize(
@@ -53,3 +55,10 @@ def test_decimal_money():
     assert cost_kopecks("0.05", 1) == 0
     assert cost_kopecks("0.50", 1) == 1
     assert percent(8200, 8000) == "2.50"
+
+
+def test_holiday_observation_does_not_create_a_false_monday_gap():
+    dates = [date(2026, 2, 16), date(2026, 2, 24), date(2026, 3, 10)]
+    assert expected_weeks(dates) == [
+        date(2026, 2, 16), date(2026, 2, 24), date(2026, 3, 2), date(2026, 3, 10)
+    ]

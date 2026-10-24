@@ -1,6 +1,19 @@
 import { fuelSchema, MAX_COMPARE_REGIONS, type Meta, type Selection } from './contracts'
 
 export type View = 'overview' | 'comparison' | 'calculator' | 'sources'
+export function monthsBefore(end: string, months: number) {
+  const date = new Date(`${end}T00:00:00Z`)
+  const day = date.getUTCDate()
+  date.setUTCDate(1)
+  date.setUTCMonth(date.getUTCMonth() - months)
+  const daysInMonth = new Date(
+    Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0),
+  ).getUTCDate()
+  date.setUTCDate(Math.min(day, daysInMonth))
+  return date.toISOString().slice(0, 10)
+}
+export const validPeriodLength = (from: string, to: string) =>
+  Date.parse(to) - Date.parse(from) <= 366 * 86_400_000
 export function periodStart(end: string, weeks: number, min: string) {
   const date = new Date(`${end}T00:00:00Z`)
   date.setUTCDate(date.getUTCDate() - (weeks - 1) * 7)
@@ -26,7 +39,7 @@ export function readSelection(meta: Meta, search = window.location.search) {
     value <= latest
   let from = params.get('from')
   let to = params.get('to')
-  const datesValid = validDate(from) && validDate(to) && from <= to
+  const datesValid = validDate(from) && validDate(to) && from <= to && validPeriodLength(from, to)
   if (!datesValid) {
     from = periodStart(latest, 4, earliest)
     to = latest

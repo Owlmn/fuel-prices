@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import type { Meta, Selection } from '../lib/contracts'
 import { formatDate } from '../lib/numbers'
-import { periodStart } from '../lib/selection'
+import { monthsBefore, periodStart, validPeriodLength } from '../lib/selection'
 import RegionPicker from './RegionPicker'
 
 export default function Filters({
@@ -22,13 +22,52 @@ export default function Filters({
   const first = meta.expected_dates[0],
     last = meta.expected_dates.at(-1)!
   const valid =
-    !!dates.from && !!dates.to && dates.from <= dates.to && dates.from >= first && dates.to <= last
+    !!dates.from &&
+    !!dates.to &&
+    dates.from <= dates.to &&
+    dates.from >= first &&
+    dates.to <= last &&
+    validPeriodLength(dates.from, dates.to)
   const edit = (patch: Partial<typeof dates>) => {
     const next = { ...dates, ...patch }
     setDates(next)
-    if (next.from && next.to && next.from <= next.to && next.from >= first && next.to <= last)
+    if (
+      next.from &&
+      next.to &&
+      next.from <= next.to &&
+      next.from >= first &&
+      next.to <= last &&
+      validPeriodLength(next.from, next.to)
+    )
       onChange(next)
   }
+  const longPeriods = (className: string) => (
+    <div className={className} role="group" aria-label="Длинный период">
+      {[6, 12].map((months) => {
+        const from = monthsBefore(last, months)
+        const available = from >= first
+        const active = selection.from === from && selection.to === last
+        return (
+          <button
+            key={months}
+            aria-label={months === 12 ? 'Год' : '6 месяцев'}
+            disabled={!available}
+            title={!available ? `История доступна с ${formatDate(first, true)}` : undefined}
+            aria-pressed={active}
+            className={active ? 'active' : ''}
+            onClick={(event) => {
+              const next = { from, to: last }
+              setDates(next)
+              onChange(next)
+              event.currentTarget.closest('details')?.removeAttribute('open')
+            }}
+          >
+            {months === 12 ? 'Год' : '6 месяцев'}
+          </button>
+        )
+      })}
+    </div>
+  )
   return (
     <section className="filter-panel" aria-label="Фильтры цен">
       <RegionPicker
@@ -57,12 +96,14 @@ export default function Filters({
         <span className="field-label">Даты наблюдений</span>
         <details className="period-dates">
           <summary
-            aria-label={`Выбрать даты наблюдений: ${formatDate(selection.from)} — ${formatDate(selection.to, true)}`}
+            aria-label={`Выбрать даты наблюдений: ${formatDate(selection.from, selection.from.slice(0, 4) !== selection.to.slice(0, 4))} — ${formatDate(selection.to, true)}`}
           >
-            {formatDate(selection.from)} — {formatDate(selection.to, true)}
+            {formatDate(selection.from, selection.from.slice(0, 4) !== selection.to.slice(0, 4))} —{' '}
+            {formatDate(selection.to, true)}
             <ChevronDown size={15} aria-hidden="true" />
           </summary>
           <div className="date-popover">
+            {longPeriods('mobile-long-periods segmented')}
             <label>
               Начало периода
               <input
@@ -89,14 +130,15 @@ export default function Filters({
         </details>
         {!valid && (
           <span className="field-error">
-            Выберите даты от {formatDate(first)} до {formatDate(last)}; начало не позже конца.
-            Показан предыдущий корректный период.
+            Выберите даты от {formatDate(first, true)} до {formatDate(last, true)}; начало не позже
+            конца. Длина периода — до 366 дней. Показан предыдущий корректный период.
           </span>
         )}
       </div>
       <div className="quick-periods">
         <span className="field-label" id="period-label">
-          Последние недели
+          <span className="desktop-period-label">Быстрый выбор</span>
+          <span className="mobile-period-label">Недели</span>
         </span>
         <div role="group" aria-labelledby="period-label">
           {[4, 8, 12].map((weeks) => (
@@ -118,9 +160,14 @@ export default function Filters({
               }}
             >
               {weeks}
+              <span className="week-unit"> {weeks === 4 ? 'недели' : 'недель'}</span>
             </button>
           ))}
+          {longPeriods('desktop-long-periods')}
         </div>
+        {monthsBefore(last, 12) < first && (
+          <span className="period-coverage">История с {formatDate(first, true)}</span>
+        )}
       </div>
     </section>
   )

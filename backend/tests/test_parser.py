@@ -39,6 +39,15 @@ def test_spans_and_missing_value():
     assert parsed.missing == ("primorsky_krai/diesel",)
 
 
+def test_unit_split_by_inline_markup_in_archive():
+    content = html_prices().decode().replace(
+        "рублей за литр", '<span>рублей з</span><a id="bookmark"></a><span>а литр</span>'
+    )
+    parsed = parse_document(content.encode())
+    assert len(parsed.prices) == 255
+    assert parsed.observation_date == date(2026, 10, 19)
+
+
 def test_absent_region_is_explicit_instead_of_invented():
     from app.collector.parser import soup_for
 

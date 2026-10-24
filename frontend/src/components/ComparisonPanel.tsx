@@ -145,8 +145,12 @@ export default function ComparisonPanel({
           {comparison?.comparison_start && (
             <>
               {' '}
-              Изменение: {formatDate(comparison.comparison_start)} —{' '}
-              {formatDate(comparison.comparison_end, true)}.
+              Изменение:{' '}
+              {formatDate(
+                comparison.comparison_start,
+                comparison.comparison_start?.slice(0, 4) !== comparison.comparison_end?.slice(0, 4),
+              )}{' '}
+              — {formatDate(comparison.comparison_end, true)}.
             </>
           )}
           {comparison?.reason === 'ONE_COMMON_DATE' && (

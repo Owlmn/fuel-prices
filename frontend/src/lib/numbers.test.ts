@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   calculate,
+  budgetChange,
   costKopecks,
   Decimal,
   formatPrice,
@@ -17,6 +18,49 @@ const state: CalculatorState = {
   customPrice: '82',
 }
 describe('Расчёт бюджета', () => {
+  it('считает долив до полного бака, включая нулевой остаток и полный бак', () => {
+    const machine = {
+      ...state.machines[0],
+      fillMode: 'tank' as const,
+      capacity: '200',
+      remaining: '40',
+    }
+    expect(calculate({ ...state, machines: [machine] }, 8000).volume?.toString()).toBe('480')
+    expect(
+      calculate({ ...state, machines: [{ ...machine, remaining: '0' }] }, 8000).volume?.toString(),
+    ).toBe('600')
+    expect(
+      calculate({ ...state, machines: [{ ...machine, remaining: '200' }] }, 8000).total?.toString(),
+    ).toBe('0')
+    expect(
+      calculate({ ...state, machines: [{ ...machine, remaining: '201' }] }, 8000).total,
+    ).toBeNull()
+    expect(
+      calculate({ ...state, machines: [{ ...machine, remaining: '' }] }, 8000).total,
+    ).toBeNull()
+    expect(
+      calculate(
+        { ...state, machines: [{ ...machine, fillMode: 'liters' }] },
+        8000,
+      ).volume?.toString(),
+    ).toBe('600')
+  })
+  it('считает изменение суммы на фактические даты и не выдумывает динамику одной точки', () => {
+    const points = [
+      { date: '2026-10-05', price_kopecks: 8000 },
+      { date: '2026-10-19', price_kopecks: 8200 },
+    ]
+    expect(budgetChange(new Decimal(1200), points)?.difference.toString()).toBe('240000')
+    expect(budgetChange(new Decimal(1200), points.slice(0, 1))).toBeNull()
+    expect(budgetChange(null, points)).toBeNull()
+    const fractional = budgetChange(new Decimal('0.01'), [
+      { ...points[0], price_kopecks: 8050 },
+      { ...points[1], price_kopecks: 8049 },
+    ])!
+    expect(fractional.before.toString()).toBe('81')
+    expect(fractional.after.toString()).toBe('80')
+    expect(fractional.difference.toString()).toBe('-1')
+  })
   it('считает парк и разницу бюджета из ТЗ', () => {
     const result = calculate(state, 8000)
     expect(result.volume?.toString()).toBe('600')

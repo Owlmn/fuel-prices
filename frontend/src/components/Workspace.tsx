@@ -240,10 +240,11 @@ export default function Workspace({
                         price={price}
                         meta={meta}
                         comparison={comparison}
+                        dataMode={dataset.mode}
                         expanded
                       />
                     </section>
-                    <aside className="panel calculator-context">
+                    <aside className="panel calculator-context" aria-label="Параметры расчёта">
                       <span className="eyebrow">ПАРАМЕТРЫ РАСЧЁТА</span>
                       <h3>{region.name}</h3>
                       <p>{fuelNames[selection.fuel]}</p>
@@ -297,8 +298,12 @@ export default function Workspace({
                               {view === 'comparison' ? 'Динамика по регионам' : 'Как менялась цена'}
                             </h2>
                             <p>
-                              {fuelNames[selection.fuel]} · {formatDate(selection.from)} —{' '}
-                              {formatDate(selection.to, true)}
+                              {fuelNames[selection.fuel]} ·{' '}
+                              {formatDate(
+                                selection.from,
+                                selection.from.slice(0, 4) !== selection.to.slice(0, 4),
+                              )}{' '}
+                              — {formatDate(selection.to, true)}
                             </p>
                           </div>
                           <button
@@ -339,6 +344,7 @@ export default function Workspace({
                           price={price}
                           meta={meta}
                           comparison={comparison}
+                          dataMode={dataset.mode}
                           onExpand={() => changeView('calculator')}
                         />
                       )}

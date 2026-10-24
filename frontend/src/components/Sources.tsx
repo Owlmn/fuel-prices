@@ -21,7 +21,7 @@ export default function Sources({ meta, mode }: { meta: Meta; mode: Dataset['mod
             <span>вида топлива</span>
           </div>
           <div>
-            <strong>{meta.expected_dates.length}</strong>
+            <strong>{new Set(meta.sources.map((source) => source.observation_date)).size}</strong>
             <span>дат наблюдений</span>
           </div>
         </div>

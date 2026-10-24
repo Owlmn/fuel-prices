@@ -457,7 +457,7 @@ main {
 }
 .filter-panel {
   display: grid;
-  grid-template-columns: minmax(190px, 1.2fr) minmax(168px, 1fr) minmax(230px, 1.2fr) 136px;
+  grid-template-columns: minmax(190px, 1.2fr) minmax(168px, 1fr) minmax(230px, 1.2fr) 260px;
   align-items: start;
   gap: 16px;
   padding: 24px;
@@ -642,13 +642,22 @@ main {
   font-size: 13px;
 }
 .quick-periods > div {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   border: 1px solid var(--control-border);
   border-radius: var(--radius-control);
 }
+.desktop-long-periods {
+  display: contents;
+}
+.mobile-long-periods,
+.mobile-period-label {
+  display: none;
+}
 .quick-periods button {
-  flex: 1;
-  width: 44px;
+  min-width: 0;
+  padding-inline: 4px;
+  font-size: 12px;
   border: 0;
   color: var(--muted);
   background: transparent;
@@ -1096,6 +1105,59 @@ tbody tr:last-child td {
 }
 .calc-tabs {
   margin-bottom: 24px;
+}
+.machine-entry {
+  padding-block: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.machine-method {
+  max-width: 340px;
+  margin-bottom: 16px;
+}
+.tank-details {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+.tank-details label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.tank-details input {
+  margin-top: 8px;
+}
+.budget-change {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  overflow-wrap: anywhere;
+}
+.budget-change h3 {
+  font-size: 15px;
+  margin: 0 0 12px;
+}
+.budget-change p {
+  margin: 8px 0;
+}
+.export-calculation {
+  margin-top: 20px;
+}
+.period-coverage {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+@media (max-width: 600px) {
+  .tank-details {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .tank-details input {
+    font-size: 16px;
+  }
 }
 .calculator-expanded .volume-field {
   max-width: 360px;
@@ -1565,7 +1627,7 @@ tbody tr:last-child td {
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
   }
   .quick-periods > div {
-    max-width: 160px;
+    max-width: 320px;
   }
   .overview-grid {
     grid-template-columns: minmax(0, 1fr) 280px;
@@ -1801,8 +1863,8 @@ tbody tr:last-child td {
   }
   .filter-panel {
     grid-template-columns: minmax(0, 1fr) 136px;
-    padding: 16px;
-    gap: 12px;
+    padding: 12px;
+    gap: 10px;
   }
   .filter-panel > .region-picker {
     grid-column: 1/-1;
@@ -1814,6 +1876,22 @@ tbody tr:last-child td {
   .quick-periods {
     grid-column: 2;
     grid-row: 2;
+  }
+  .quick-periods > div {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .desktop-long-periods,
+  .desktop-period-label,
+  .week-unit {
+    display: none;
+  }
+  .mobile-period-label {
+    display: inline;
+  }
+  .mobile-long-periods {
+    display: flex;
+    grid-column: 1/-1;
+    margin-bottom: 4px;
   }
   .period-picker {
     grid-column: 1/-1;

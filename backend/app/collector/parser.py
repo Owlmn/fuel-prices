@@ -116,7 +116,7 @@ def parse_document(content: bytes) -> ParsedDocument:
     if (
         "средние потребительские цены" not in context
         or not dates
-        or "рублей за литр" not in context
+        or not re.search(r"рублей\s+з\s*а\s+литр", context)
     ):
         raise ParseError("Missing regional absolute-price caption/date/unit")
     match = dates[-1]

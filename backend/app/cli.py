@@ -29,7 +29,7 @@ def main():
     sub.add_parser("init-db")
     for name in ("collect", "bootstrap"):
         p = sub.add_parser(name)
-        p.add_argument("--weeks", type=int, default=13)
+        p.add_argument("--weeks", type=int, default=53)
     p = sub.add_parser("import-file")
     p.add_argument("file", type=Path)
     p.add_argument("--url", required=True)

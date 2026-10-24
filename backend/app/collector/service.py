@@ -234,7 +234,7 @@ def ingest_documents(settings: Settings, documents: list[Downloaded], *, mode="b
                 raise
 
 
-def collect(settings: Settings, *, weeks=13, bootstrap=False, client=None) -> dict:
+def collect(settings: Settings, *, weeks=53, bootstrap=False, client=None) -> dict:
     # The lock covers discovery/download/staging as well, not only the final database write.
     with writer_lock(settings.data_dir):
         check_disk(settings)

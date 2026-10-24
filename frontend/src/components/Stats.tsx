@@ -9,7 +9,7 @@ export default function Stats({ price, meta }: { price: Price; meta: Meta }) {
   return (
     <section className="stats-grid" aria-label="Показатели региона">
       <div className="stat-card current-price">
-        <p className="stat-label">Цена на {formatDate(latest?.date)}</p>
+        <p className="stat-label">Цена на {formatDate(latest?.date, true)}</p>
         <div className="stat-value">
           {source ? (
             <a
@@ -40,7 +40,7 @@ export default function Stats({ price, meta }: { price: Price; meta: Meta }) {
         </div>
         <p>
           {price.observations.length > 1
-            ? `${formatDate(price.actual_period?.from)} — ${formatDate(price.actual_period?.to, true)}`
+            ? `${formatDate(price.actual_period?.from, price.actual_period?.from.slice(0, 4) !== price.actual_period?.to.slice(0, 4))} — ${formatDate(price.actual_period?.to, true)}`
             : 'Нужно минимум два наблюдения'}
         </p>
       </div>

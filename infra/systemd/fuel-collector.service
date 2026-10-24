@@ -10,7 +10,7 @@ Group=fuelmon
 WorkingDirectory=/opt/fuel-monitor/backend
 EnvironmentFile=/etc/fuel-monitor.env
 Environment=PYTHONUNBUFFERED=1
-ExecStart=/opt/fuel-monitor/backend/.venv/bin/python -m app.cli collect --weeks 13
+ExecStart=/opt/fuel-monitor/backend/.venv/bin/python -m app.cli collect --weeks 53
 StateDirectory=fuel-monitor
 LogsDirectory=fuel-monitor
 UMask=0077

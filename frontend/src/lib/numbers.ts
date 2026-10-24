@@ -36,6 +36,7 @@ export function positiveInput(
   raw: string,
   max: number,
   integer = false,
+  allowZero = false,
 ): { value: Decimal | null; error: string | null } {
   if (!raw.trim()) return { value: null, error: 'Заполните поле' }
   if (!(integer ? /^\d+$/ : /^\d+(?:[.,]\d{1,2})?$/).test(raw.trim())) {
@@ -45,11 +46,20 @@ export function positiveInput(
     }
   }
   const value = new Decimal(raw.trim().replace(',', '.'))
-  if (value.lte(0)) return { value: null, error: 'Значение должно быть больше нуля' }
+  if (value.lt(0) || (!allowZero && value.eq(0)))
+    return { value: null, error: 'Значение должно быть больше нуля' }
   if (value.gt(max)) return { value: null, error: `Максимум ${formatVolume(String(max))}` }
   return { value, error: null }
 }
-export type Machine = { id: string; name: string; liters: string; count: string }
+export type Machine = {
+  id: string
+  name: string
+  liters: string
+  count: string
+  fillMode?: 'liters' | 'tank'
+  capacity?: string
+  remaining?: string
+}
 export type CalculatorState = {
   mode: 'bulk' | 'machines'
   volume: string
@@ -59,10 +69,22 @@ export type CalculatorState = {
 }
 export function calculate(state: CalculatorState, regionalPrice: number | null) {
   const bulk = positiveInput(state.volume, 1_000_000)
-  const rows = state.machines.map((row) => ({
-    liters: positiveInput(row.liters, 1_000_000),
-    count: positiveInput(row.count, 1_000, true),
-  }))
+  const rows = state.machines.map((row) => {
+    const capacity = positiveInput(row.capacity ?? '', 1_000_000)
+    const remaining = positiveInput(row.remaining ?? '', 1_000_000, false, true)
+    if (capacity.value && remaining.value?.gt(capacity.value)) {
+      remaining.error = 'Остаток не может превышать объём бака'
+      remaining.value = null
+    }
+    const liters =
+      row.fillMode === 'tank'
+        ? {
+            value: capacity.value && remaining.value ? capacity.value.minus(remaining.value) : null,
+            error: capacity.error ?? remaining.error,
+          }
+        : positiveInput(row.liters, 1_000_000)
+    return { liters, capacity, remaining, count: positiveInput(row.count, 1_000, true) }
+  })
   const validRows = rows.length > 0 && rows.every((row) => row.liters.value && row.count.value)
   const volume =
     state.mode === 'bulk'
@@ -88,4 +110,17 @@ export function calculate(state: CalculatorState, regionalPrice: number | null) 
     rows,
     custom,
   }
+}
+
+export function budgetChange(
+  volume: Decimal | null,
+  observations: { date: string; price_kopecks: number }[],
+) {
+  if (!volume || observations.length < 2) return null
+  const first = observations[0],
+    last = observations.at(-1)!
+  if (first.date === last.date) return null
+  const before = costKopecks(volume, first.price_kopecks)
+  const after = costKopecks(volume, last.price_kopecks)
+  return { from: first.date, to: last.date, before, after, difference: after.minus(before) }
 }

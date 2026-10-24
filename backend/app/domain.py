@@ -30,9 +30,11 @@ def expected_weeks(dates: list[date]) -> list[date]:
     if not dates:
         return []
     result = set(dates)
-    point = min(dates)
+    weeks_with_observations = {d - timedelta(days=d.weekday()) for d in dates}
+    point = min(weeks_with_observations)
     while point <= max(dates):
-        result.add(point)
+        if point not in weeks_with_observations:
+            result.add(point)
         point += timedelta(days=7)
     return sorted(result)
 
