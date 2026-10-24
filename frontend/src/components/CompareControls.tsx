@@ -15,7 +15,7 @@ export default function CompareControls({
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
   const [draft, setDraft] = useState<string[]>([])
-  const root = useRef<HTMLDivElement>(null)
+  const dialog = useRef<HTMLDialogElement>(null)
   const trigger = useRef<HTMLButtonElement>(null)
   const id = useId()
   const available = meta.regions.filter(
@@ -27,13 +27,12 @@ export default function CompareControls({
   const base = meta.regions.find((region) => region.id === selection.region)?.name
   useEffect(() => {
     if (!open) return
-    const outside = (event: PointerEvent) => {
-      if (!root.current?.contains(event.target as Node)) setOpen(false)
-    }
-    document.addEventListener('pointerdown', outside)
-    return () => document.removeEventListener('pointerdown', outside)
+    const element = dialog.current!
+    element.showModal()
+    return () => element.close()
   }, [open])
   const close = () => {
+    dialog.current?.close()
     setOpen(false)
     trigger.current?.focus()
   }
@@ -59,13 +58,7 @@ export default function CompareControls({
           </span>
         ))}
       </div>
-      <div
-        className="comparison-picker"
-        ref={root}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') close()
-        }}
-      >
+      <div className="comparison-picker">
         <span className="field-label">
           Дополнительные регионы: {selection.compare.length}/{MAX_COMPARE_REGIONS}
         </span>
@@ -88,13 +81,47 @@ export default function CompareControls({
           <ChevronDown size={15} aria-hidden="true" />
         </button>
         {open && (
-          <div
-            className="region-popover comparison-popover"
+          <dialog
+            ref={dialog}
+            className="comparison-dialog"
             id={id}
-            role="dialog"
+            aria-modal="true"
             aria-label="Выбор регионов для сравнения"
             aria-describedby={`${id}-help`}
+            onKeyDown={(event) => {
+              if (event.key !== 'Tab') return
+              const controls = Array.from(
+                event.currentTarget.querySelectorAll<HTMLElement>(
+                  'input:not(:disabled), button:not(:disabled)',
+                ),
+              )
+              const first = controls[0]
+              const last = controls.at(-1)!
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault()
+                last.focus()
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault()
+                first.focus()
+              }
+            }}
+            onCancel={(event) => {
+              event.preventDefault()
+              close()
+            }}
+            onClick={(event) => {
+              if (event.target !== event.currentTarget) return
+              const box = event.currentTarget.getBoundingClientRect()
+              if (
+                event.clientX < box.left ||
+                event.clientX > box.right ||
+                event.clientY < box.top ||
+                event.clientY > box.bottom
+              )
+                close()
+            }}
           >
+            <h2>Регионы для сравнения</h2>
             <p className="comparison-base">Базовый: {base}</p>
             <div className="region-search">
               <Search size={17} aria-hidden="true" />
@@ -147,7 +174,7 @@ export default function CompareControls({
                 Применить
               </button>
             </div>
-          </div>
+          </dialog>
         )}
       </div>
     </div>

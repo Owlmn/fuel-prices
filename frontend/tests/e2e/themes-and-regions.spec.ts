@@ -16,22 +16,33 @@ test('тема следует системе, запоминает ручной 
   })
   await page.emulateMedia({ colorScheme: 'light' })
   await page.goto('/')
-  const control = page.getByRole('combobox', { name: 'Тема оформления' })
-  await expect(control).toHaveValue('system')
+  const control = page.getByRole('group', { name: 'Тема оформления' })
+  await expect(
+    control.getByRole('button', { name: 'Системная тема', exact: true }),
+  ).toHaveAttribute('aria-pressed', 'true')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
-  await control.selectOption('dark')
+  await control.getByRole('button', { name: 'Тёмная тема', exact: true }).click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   expect(await page.evaluate(() => localStorage.getItem('fuel-theme'))).toBe('dark')
   await page.reload()
-  await expect(control).toHaveValue('dark')
+  await expect(control.getByRole('button', { name: 'Тёмная тема', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
   const other = await context.newPage()
   await other.goto('/')
-  await expect(other.getByRole('combobox', { name: 'Тема оформления' })).toHaveValue('dark')
-  await control.selectOption('light')
+  await expect(other.getByRole('button', { name: 'Тёмная тема', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await control.getByRole('button', { name: 'Светлая тема', exact: true }).click()
   await expect(other.locator('html')).toHaveAttribute('data-theme', 'light')
-  await expect(other.getByRole('combobox', { name: 'Тема оформления' })).toHaveValue('light')
+  await expect(other.getByRole('button', { name: 'Светлая тема', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
   await other.close()
-  await control.selectOption('system')
+  await control.getByRole('button', { name: 'Системная тема', exact: true }).click()
   await page.emulateMedia({ colorScheme: 'dark' })
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await page.emulateMedia({ colorScheme: 'light' })
@@ -55,15 +66,20 @@ test('переключатель работает при запрете запи
     }
   })
   await page.goto('/')
-  await page.getByRole('combobox', { name: 'Тема оформления' }).selectOption('dark')
+  await page.getByRole('button', { name: 'Тёмная тема', exact: true }).click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await expect(page.getByRole('combobox', { name: 'Тема оформления' })).toHaveValue('dark')
+  await expect(page.getByRole('button', { name: 'Тёмная тема', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
 })
 
 for (const theme of ['light', 'dark']) {
   test(`обводка охватывает всё поле объёма и поиска: ${theme}`, async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('combobox', { name: 'Тема оформления' }).selectOption(theme)
+    await page
+      .getByRole('button', { name: theme === 'dark' ? 'Тёмная тема' : 'Светлая тема', exact: true })
+      .click()
     const volume = page.getByRole('textbox', { name: 'Объём топлива, литры' })
     await volume.focus()
     const outline = await volume.evaluate((input) => {
@@ -98,8 +114,8 @@ for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 })
     await page.goto('/?view=comparison')
     await page
-      .getByRole('combobox', { name: 'Тема оформления' })
-      .selectOption(width === 390 ? 'dark' : 'light')
+      .getByRole('button', { name: width === 390 ? 'Тёмная тема' : 'Светлая тема', exact: true })
+      .click()
     const trigger = page.getByRole('button', { name: 'Выбрать регионы', exact: true })
     await trigger.click()
     const dialog = page.getByRole('dialog', { name: 'Выбор регионов для сравнения' })

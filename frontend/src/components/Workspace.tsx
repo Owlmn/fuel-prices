@@ -10,6 +10,7 @@ import PriceChart from './PriceChart'
 import Calculator from './Calculator'
 import Filters from './Filters'
 import Stats from './Stats'
+import FuelPrices from './FuelPrices'
 import CompareControls from './CompareControls'
 import ComparisonPanel from './ComparisonPanel'
 import Sources from './Sources'
@@ -281,6 +282,9 @@ export default function Workspace({
                 ) : (
                   <>
                     {price && <Stats price={price} meta={meta} />}
+                    {view === 'overview' && (
+                      <FuelPrices dataset={dataset} selection={selection} onReserve={onReserve} />
+                    )}
                     <div
                       className={
                         view === 'comparison' ? 'overview-grid comparison-grid' : 'overview-grid'

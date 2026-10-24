@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useSyncExternalStore } from 'react'
+import { useEffect, useId, useState, useSyncExternalStore } from 'react'
 import { Monitor, Moon, Sun } from 'lucide-react'
 import {
   applyTheme,
@@ -11,6 +11,8 @@ import {
 } from '../lib/theme'
 
 export default function ThemeControl() {
+  const id = useId()
+  const [dismissed, setDismissed] = useState(false)
   const preference = useSyncExternalStore(
     subscribeTheme,
     getThemePreference,
@@ -32,19 +34,36 @@ export default function ThemeControl() {
       window.removeEventListener('storage', syncStorage)
     }
   }, [])
-  const Icon = preference === 'dark' ? Moon : preference === 'light' ? Sun : Monitor
   return (
-    <label className="theme-control">
-      <Icon size={17} aria-hidden="true" />
-      <span className="sr-only">Тема оформления</span>
-      <select
-        value={preference}
-        onChange={(event) => setThemePreference(event.target.value as ThemePreference)}
-      >
-        <option value="system">Системная</option>
-        <option value="light">Светлая</option>
-        <option value="dark">Тёмная</option>
-      </select>
-    </label>
+    <div className="theme-control" role="group" aria-label="Тема оформления">
+      {(
+        [
+          ['light', Sun, 'Светлая тема', 'Светлый фон для работы днём'],
+          ['dark', Moon, 'Тёмная тема', 'Тёмный фон для работы при слабом освещении'],
+          ['system', Monitor, 'Системная тема', 'Автоматически повторяет тему устройства'],
+        ] as const
+      ).map(([value, Icon, label, hint]) => (
+        <span className="theme-option" key={value}>
+          <button
+            type="button"
+            aria-label={label}
+            aria-pressed={preference === value}
+            aria-describedby={`${id}-${value}`}
+            onClick={() => setThemePreference(value as ThemePreference)}
+            onPointerEnter={() => setDismissed(false)}
+            onFocus={() => setDismissed(false)}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') setDismissed(true)
+            }}
+          >
+            <Icon size={18} aria-hidden="true" />
+          </button>
+          <span id={`${id}-${value}`} className="theme-tooltip" role="tooltip" hidden={dismissed}>
+            <strong>{label}</strong>
+            {hint}
+          </span>
+        </span>
+      ))}
+    </div>
   )
 }
