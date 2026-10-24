@@ -60,5 +60,8 @@ def test_decimal_money():
 def test_holiday_observation_does_not_create_a_false_monday_gap():
     dates = [date(2026, 2, 16), date(2026, 2, 24), date(2026, 3, 10)]
     assert expected_weeks(dates) == [
-        date(2026, 2, 16), date(2026, 2, 24), date(2026, 3, 2), date(2026, 3, 10)
+        date(2026, 2, 16),
+        date(2026, 2, 24),
+        date(2026, 3, 2),
+        date(2026, 3, 10),
     ]

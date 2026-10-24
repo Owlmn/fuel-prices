@@ -40,8 +40,10 @@ def test_spans_and_missing_value():
 
 
 def test_unit_split_by_inline_markup_in_archive():
-    content = html_prices().decode().replace(
-        "рублей за литр", '<span>рублей з</span><a id="bookmark"></a><span>а литр</span>'
+    content = (
+        html_prices()
+        .decode()
+        .replace("рублей за литр", '<span>рублей з</span><a id="bookmark"></a><span>а литр</span>')
     )
     parsed = parse_document(content.encode())
     assert len(parsed.prices) == 255
