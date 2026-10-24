@@ -12,27 +12,19 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/v1/**', (route) => route.abort())
 })
 
-test('кнопки темы: выбранное состояние, подсказки мышью и клавиатурой, Escape', async ({
-  page,
-}) => {
+test('кнопки темы переключаются с клавиатуры и не показывают подсказок', async ({ page }) => {
   await page.goto('/')
   const group = page.getByRole('group', { name: 'Тема оформления' })
   await expect(group.getByRole('button')).toHaveCount(3)
   const dark = group.getByRole('button', { name: 'Тёмная тема', exact: true })
   await dark.focus()
-  const tooltip = page.getByRole('tooltip').filter({ hasText: 'Тёмная тема' })
-  await expect(tooltip).toBeVisible()
-  await expect(tooltip).toContainText('при слабом освещении')
+  await expect(group.getByRole('tooltip')).toHaveCount(0)
   await page.keyboard.press('Enter')
   await expect(dark).toHaveAttribute('aria-pressed', 'true')
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await page.keyboard.press('Escape')
-  await expect(tooltip).toBeHidden()
   await page.getByRole('heading', { level: 1 }).click()
   await group.getByRole('button', { name: 'Системная тема', exact: true }).hover()
-  await expect(page.getByRole('tooltip').filter({ hasText: 'Системная тема' })).toContainText(
-    'тему устройства',
-  )
+  await expect(group.getByRole('tooltip')).toHaveCount(0)
 })
 
 for (const viewport of [

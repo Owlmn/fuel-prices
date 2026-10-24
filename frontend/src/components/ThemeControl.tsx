@@ -1,18 +1,10 @@
 'use client'
 
-import { useEffect, useId, useState, useSyncExternalStore } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 import { Monitor, Moon, Sun } from 'lucide-react'
-import {
-  applyTheme,
-  getThemePreference,
-  setThemePreference,
-  subscribeTheme,
-  type ThemePreference,
-} from '../lib/theme'
+import { applyTheme, getThemePreference, setThemePreference, subscribeTheme } from '../lib/theme'
 
 export default function ThemeControl() {
-  const id = useId()
-  const [dismissed, setDismissed] = useState(false)
   const preference = useSyncExternalStore(
     subscribeTheme,
     getThemePreference,
@@ -38,30 +30,20 @@ export default function ThemeControl() {
     <div className="theme-control" role="group" aria-label="Тема оформления">
       {(
         [
-          ['light', Sun, 'Светлая тема', 'Светлый фон для работы днём'],
-          ['dark', Moon, 'Тёмная тема', 'Тёмный фон для работы при слабом освещении'],
-          ['system', Monitor, 'Системная тема', 'Автоматически повторяет тему устройства'],
+          ['light', Sun, 'Светлая тема'],
+          ['dark', Moon, 'Тёмная тема'],
+          ['system', Monitor, 'Системная тема'],
         ] as const
-      ).map(([value, Icon, label, hint]) => (
+      ).map(([value, Icon, label]) => (
         <span className="theme-option" key={value}>
           <button
             type="button"
             aria-label={label}
             aria-pressed={preference === value}
-            aria-describedby={`${id}-${value}`}
-            onClick={() => setThemePreference(value as ThemePreference)}
-            onPointerEnter={() => setDismissed(false)}
-            onFocus={() => setDismissed(false)}
-            onKeyDown={(event) => {
-              if (event.key === 'Escape') setDismissed(true)
-            }}
+            onClick={() => setThemePreference(value)}
           >
             <Icon size={18} aria-hidden="true" />
           </button>
-          <span id={`${id}-${value}`} className="theme-tooltip" role="tooltip" hidden={dismissed}>
-            <strong>{label}</strong>
-            {hint}
-          </span>
         </span>
       ))}
     </div>
