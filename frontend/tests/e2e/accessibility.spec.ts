@@ -1,5 +1,29 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+
+const snapshot = JSON.parse(readFileSync('public/snapshot.json', 'utf8'))
+const observationTime = new Date(`${snapshot.meta.expected_dates.at(-1)}T12:00:00Z`)
+
+test.beforeEach(async ({ page }) => {
+  await page.clock.setFixedTime(observationTime)
+})
+
+test('устаревший резерв показывает предупреждение и сохраняет доступность на мобильном экране', async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date(observationTime.getTime() + 15 * 86_400_000))
+  await page.setViewportSize({ width: 360, height: 900 })
+  await page.route('**/api/v1/**', (route) => route.abort())
+  await page.goto('/')
+  await expect(page.getByText(/Последнее наблюдение старше 14 дней/)).toBeVisible()
+  await expect(page.locator('.current-price .stat-value')).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+  const scan = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+    .analyze()
+  expect(scan.violations).toEqual([])
+})
 
 for (const colorScheme of ['light', 'dark'] as const) {
   for (const width of [360, 1440]) {
