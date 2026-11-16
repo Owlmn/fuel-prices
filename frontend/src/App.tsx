@@ -4,14 +4,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { Droplets, LoaderCircle, RefreshCw } from 'lucide-react'
 import { ApiError, getMeta, getSnapshot } from './lib/api'
-import type { Dataset, Meta, Snapshot } from './lib/contracts'
-import { formatDate, type CalculatorState } from './lib/numbers'
+import type { Dataset, Meta } from './lib/contracts'
+import type { CalculatorState } from './lib/numbers'
 import Workspace from './components/Workspace'
 
 export default function App() {
   const [dataset, setDataset] = useState<Dataset>()
   const [error, setError] = useState<string>()
-  const [pendingSnapshot, setPendingSnapshot] = useState<Snapshot>()
   const [newMeta, setNewMeta] = useState<Meta>()
   const [connecting, setConnecting] = useState(true)
   const [calculator, setCalculator] = useState<CalculatorState>({
@@ -28,7 +27,6 @@ export default function App() {
     (next: Dataset) => {
       client.cancelQueries()
       client.clear()
-      setPendingSnapshot(undefined)
       setNewMeta(undefined)
       setError(undefined)
       setDataset(next)
@@ -43,14 +41,7 @@ export default function App() {
     setConnecting(true)
     try {
       const snapshot = await getSnapshot()
-      const pinned = new URLSearchParams(window.location.search).get('dataset_version')
-      if (pinned && pinned !== snapshot.meta.dataset_version) {
-        setPendingSnapshot(snapshot)
-        setError(
-          'Сервис недоступен. В резерве другая версия данных: переключение изменит цифры и версию в ссылке.',
-        )
-        setConnecting(false)
-      } else activate({ mode: 'snapshot', meta: snapshot.meta, snapshot })
+      activate({ mode: 'snapshot', meta: snapshot.meta, snapshot })
     } catch {
       setError('Сервис и резервный снимок недоступны. Проверьте подключение и повторите попытку.')
       setConnecting(false)
@@ -58,32 +49,25 @@ export default function App() {
       switching.current = false
     }
   }, [activate])
-  const connect = useCallback(
-    async (latest = false) => {
-      controller.current?.abort()
-      const current = new AbortController()
-      controller.current = current
-      setConnecting(true)
-      setDataset(undefined)
-      setPendingSnapshot(undefined)
-      setError(undefined)
-      try {
-        const pinned = latest
-          ? undefined
-          : (new URLSearchParams(window.location.search).get('dataset_version') ?? undefined)
-        const meta = await getMeta(current.signal, pinned)
-        if (!current.signal.aborted) activate({ mode: 'api', meta })
-      } catch (cause) {
-        if (current.signal.aborted) return
-        if (cause instanceof ApiError && cause.unavailable) await useReserve()
-        else {
-          setError(cause instanceof Error ? cause.message : 'Не удалось загрузить данные')
-          setConnecting(false)
-        }
+  const connect = useCallback(async () => {
+    controller.current?.abort()
+    const current = new AbortController()
+    controller.current = current
+    setConnecting(true)
+    setDataset(undefined)
+    setError(undefined)
+    try {
+      const meta = await getMeta(current.signal)
+      if (!current.signal.aborted) activate({ mode: 'api', meta })
+    } catch (cause) {
+      if (current.signal.aborted) return
+      if (cause instanceof ApiError && cause.unavailable) await useReserve()
+      else {
+        setError(cause instanceof Error ? cause.message : 'Не удалось загрузить данные')
+        setConnecting(false)
       }
-    },
-    [activate, useReserve],
-  )
+    }
+  }, [activate, useReserve])
   useEffect(() => {
     void connect()
     return () => controller.current?.abort()
@@ -129,27 +113,6 @@ export default function App() {
                 <RefreshCw size={16} />
                 Повторить подключение
               </button>
-              {pendingSnapshot ? (
-                <button
-                  className="secondary-button"
-                  onClick={() => {
-                    const params = new URLSearchParams(window.location.search)
-                    params.set('dataset_version', pendingSnapshot.meta.dataset_version)
-                    window.history.replaceState(null, '', `?${params}`)
-                    activate({
-                      mode: 'snapshot',
-                      meta: pendingSnapshot.meta,
-                      snapshot: pendingSnapshot,
-                    })
-                  }}
-                >
-                  Открыть резерв на {formatDate(pendingSnapshot.meta.expected_dates.at(-1), true)}
-                </button>
-              ) : (
-                <button className="text-button" onClick={() => void connect(true)}>
-                  Открыть последнюю версию
-                </button>
-              )}
             </div>
           </>
         )}

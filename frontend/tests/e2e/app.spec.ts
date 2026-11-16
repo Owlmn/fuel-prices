@@ -96,16 +96,59 @@ test('резерв загружается при недоступном API бе
   await page.screenshot({ path: 'test-results/overview-desktop.png', fullPage: true })
 })
 
-test('недоступная закреплённая версия не заменяется резервом автоматически', async ({ page }) => {
+test('старая версия ссылки не блокирует явно обозначенный резерв при отказе API', async ({
+  page,
+}) => {
   await page.route('**/api/v1/**', (route) => route.abort())
   await page.goto('/?dataset_version=another-version')
-  await expect(page.getByRole('alert', { name: 'Ошибка загрузки данных' })).toContainText(
-    'В резерве другая версия',
-  )
-  await expect(page.getByRole('heading', { name: 'Как менялась цена' })).toHaveCount(0)
-  await page.getByRole('button', { name: /Открыть резерв на/ }).click()
   await expect(page).toHaveURL(new RegExp(`dataset_version=${version}`))
   await expect(page.getByText(/Резервные данные на/)).toBeVisible()
+})
+
+test('повторный вход по старой ссылке получает актуальную версию и сохраняет фильтры', async ({
+  page,
+}) => {
+  let current = snapshotSchema.parse(snapshot)
+  const metaVersions: (string | null)[] = []
+  await page.route('**/api/v1/**', (route) => {
+    const url = new URL(route.request().url())
+    const params = url.searchParams
+    if (url.pathname.endsWith('/meta')) {
+      metaVersions.push(params.get('dataset_version'))
+      return route.fulfill({ json: current.meta })
+    }
+    expect(params.get('dataset_version')).toBe(current.meta.dataset_version)
+    const selection = {
+      region: params.get('region') ?? params.get('base_region')!,
+      fuel: params.get('fuel') as Fuel,
+      from: params.get('from')!,
+      to: params.get('to')!,
+      compare: params.getAll('regions').filter((region) => region !== params.get('base_region')),
+    }
+    return route.fulfill({
+      json: url.pathname.endsWith('/prices')
+        ? snapshotPrice(current, selection.region, selection.fuel, selection.from, selection.to)
+        : snapshotComparison(current, selection),
+    })
+  })
+  await page.goto(
+    '/?region=chelyabinsk_oblast&fuel=ai95&from=2026-09-28&to=2026-10-19&dataset_version=old-version&compare=amur_oblast',
+  )
+  await expect(page).toHaveURL(new RegExp(`dataset_version=${version}`))
+  await expect(page.getByRole('heading', { name: 'Как менялась цена' })).toBeVisible()
+  current = structuredClone(current)
+  current.meta.dataset_version = 'newly-published-version'
+  current.meta.active_version = current.meta.dataset_version
+  await page.reload()
+  await expect(page).toHaveURL(/dataset_version=newly-published-version/)
+  await expect(page.getByRole('heading', { name: 'Как менялась цена' })).toBeVisible()
+  const filters = new URL(page.url()).searchParams
+  expect(filters.get('region')).toBe('chelyabinsk_oblast')
+  expect(filters.get('fuel')).toBe('ai95')
+  expect(filters.get('from')).toBe('2026-09-28')
+  expect(filters.getAll('compare')).toEqual(['amur_oblast'])
+  expect(metaVersions.length).toBeGreaterThanOrEqual(2)
+  expect(metaVersions.every((value) => value === null)).toBe(true)
 })
 
 test('404 и нарушение контракта не маскируются резервом', async ({ page }) => {
